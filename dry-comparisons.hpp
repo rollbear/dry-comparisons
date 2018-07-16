@@ -107,6 +107,10 @@ public:
     {
       return os << "any_of{" << internal::member_print{self.get()} << '}';
     }
+    constexpr explicit operator bool() const
+    {
+        return std::apply([](const auto& ... a) { return (a || ...);}, get());
+    }
 private:
     constexpr const std::tuple<T...> get() const { return *this;}
 };
@@ -181,6 +185,10 @@ public:
     {
       return os << "none_of{" << internal::member_print{self.get()} << '}';
     }
+    constexpr explicit operator bool() const
+    {
+        return std::apply([](const auto& ... a) { return !(a || ...);}, get());
+    }
 private:
     constexpr const std::tuple<T...> get() const { return *this;}
 };
@@ -254,6 +262,10 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const all_of& self)
     {
       return os << "all_of{" << internal::member_print{self.get()} << '}';
+    }
+    constexpr explicit operator bool() const
+    {
+      return std::apply([](const auto& ... a) { return (a && ...);}, get());
     }
 private:
     constexpr const std::tuple<T...> get() const { return *this;}

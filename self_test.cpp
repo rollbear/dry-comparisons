@@ -136,6 +136,101 @@ int main()
         auto s = os.str();
         REQUIRE(s == "all_of{1,2,3}")
       }
+    },
+    {
+      "all_of is true if all members are true",
+      []{
+        int x;
+        auto b = bool(all_of{true, 1, &x});
+        REQUIRE(b);
+      }
+    },
+    {
+      "all_of is false with nullptr",
+      []{
+        auto b = bool(all_of{true, 1, (const char*)nullptr});
+        REQUIRE(!b);
+      }
+    },
+    {
+      "all_of is false with int(0)",
+      [] {
+        int x = 0;
+        auto b = bool(all_of{true, x, &x});
+        REQUIRE(!b);
+      }
+    },
+    {
+      "all_of isfalse with false member",
+      [] {
+        int x = 1;
+        auto b = bool(all_of(false, x, &x));
+        REQUIRE(!b);
+      }
+    },
+    {
+      "none_of is true if all members are false",
+      []{
+        int x = 0;
+        auto b = bool(none_of{false, x, (const char*)nullptr});
+        REQUIRE(b);
+      }
+    },
+    {
+      "none_of is false if a member is a non-nullptr",
+      []{
+        int x = 0;
+        auto b = bool(none_of{false, x, &x});
+        REQUIRE(!b);
+      }
+    },
+    {
+      "none_of is false if a member is a non-zero int",
+      []{
+        int x = 1;
+        auto b = bool(none_of{false, x, (const char*)nullptr});
+        REQUIRE(!b);
+      }
+    },
+    {
+      "none_of is false if a member true",
+      []{
+        int x = 0;
+        auto b = bool(none_of{true, x, (const char*)nullptr});
+        REQUIRE(!b);
+      }
+    },
+    {
+      "any_of is false all members are false",
+      []{
+        int x = 0;
+        auto b = bool(any_of{false, x, (const char*)nullptr});
+        REQUIRE(!b);
+      }
+    },
+    {
+      "any_of is true if a member is a non-nullptr",
+      []{
+        int x = 0;
+        auto b = bool(any_of{false, x, &x});
+        REQUIRE(b);
+      }
+    },
+    {
+      "any_of is true if a member is a non-zero int",
+      []{
+        int x = 1;
+        auto b = bool(any_of{false, x, (const char*)nullptr});
+        REQUIRE(b);
+      }
+    },
+    {
+      "any_of is true if a member is true",
+      []{
+        int x = 0;
+        auto b = bool(any_of{true, x, (const char*)nullptr});
+        REQUIRE(b);
+      }
     }
 
   };
