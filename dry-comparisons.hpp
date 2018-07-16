@@ -5,9 +5,35 @@
 #include <type_traits>
 #include <tuple>
 #include <functional>
+#include <iostream>
 
 namespace rollbear {
 
+namespace internal {
+template <typename ... T>
+class member_print
+{
+public:
+  template <typename ... U>
+  member_print(const std::tuple<U...>& t, std::void_t<decltype(std::declval<std::ostream&>() << std::declval<const U&>())...>* = nullptr)
+    : m(t) {}
+    friend
+    std::ostream& operator<<(std::ostream& os, const member_print& self)
+    {
+      std::apply([&os](const auto& ... v) {
+        int first = 1;
+        ((os << ","+std::exchange(first,0) << v),...);
+      },self.m);
+      return os;
+    }
+private:
+  const std::tuple<T...>& m;
+};
+
+template <typename ... T>
+member_print(const std::tuple<T...>&) -> member_print<T...>;
+
+}
 template <typename ... T>
 class any_of : std::tuple<T...>
 {
@@ -75,6 +101,11 @@ public:
     friend constexpr auto operator<=(const U& u, const any_of& a) -> decltype(a >= u)
     {
         return a >= u;
+    }
+    template <typename = decltype(internal::member_print(std::declval<const std::tuple<T...>&>()))>
+    friend std::ostream& operator<<(std::ostream& os, const any_of& self)
+    {
+      return os << "any_of{" << internal::member_print{self.get()} << '}';
     }
 private:
     constexpr const std::tuple<T...> get() const { return *this;}
@@ -145,6 +176,11 @@ public:
     {
         return a >= u;
     }
+    template <typename = decltype(internal::member_print(std::declval<const std::tuple<T...>&>()))>
+    friend std::ostream& operator<<(std::ostream& os, const none_of& self)
+    {
+      return os << "none_of{" << internal::member_print{self.get()} << '}';
+    }
 private:
     constexpr const std::tuple<T...> get() const { return *this;}
 };
@@ -213,6 +249,11 @@ public:
     friend constexpr auto operator<=(const U& u, const all_of& a) -> decltype(a >= u)
     {
         return a >= u;
+    }
+    template <typename = decltype(internal::member_print(std::declval<const std::tuple<T...>&>()))>
+    friend std::ostream& operator<<(std::ostream& os, const all_of& self)
+    {
+      return os << "all_of{" << internal::member_print{self.get()} << '}';
     }
 private:
     constexpr const std::tuple<T...> get() const { return *this;}

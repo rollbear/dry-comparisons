@@ -1,5 +1,7 @@
 #include "dry-comparisons.hpp"
 #include <cstdio>
+#include <sstream>
+#include <iomanip>
 
 template <template <typename ...> class, typename ...>
   struct is_detected_ : std::false_type {};
@@ -78,11 +80,86 @@ struct any_of_eq {
   template<typename ... Args>
   using type = decltype(std::declval<T>() == any_of{std::declval<Args>()...});
 };
+template <typename T>
+using print_result_type = decltype(std::declval<std::ostream&>() << std::declval<const T&>());
+
 static_assert(x == any_of(3));
 static_assert(!is_detected_v<any_of_eq<int>::type, char*,int>);
 static_assert(is_detected_v<any_of_eq<int>::type, int,int>);
 
+struct nonprintable {};
+
+static_assert(std::is_constructible_v<any_of<nonprintable>, nonprintable>);
+static_assert(std::is_constructible_v<none_of<nonprintable>, nonprintable>);
+static_assert(std::is_constructible_v<all_of<nonprintable>, nonprintable>);
+
+static_assert(is_detected_v<print_result_type, any_of<int,int>>);
+static_assert(!is_detected_v<print_result_type, any_of<int, nonprintable>>);
+static_assert(is_detected_v<print_result_type, none_of<int,int>>);
+static_assert(!is_detected_v<print_result_type, none_of<int, nonprintable>>);
+static_assert(is_detected_v<print_result_type, all_of<int,int>>);
+static_assert(!is_detected_v<print_result_type, all_of<int, nonprintable>>);
+
+#define REQUIRE(...) if (__VA_ARGS__) {;} else { throw #__VA_ARGS__;}
+
+
 int main()
 {
-  std::puts("cool!");
+  struct test {
+    const char* name;
+    void (*test_func)();
+  };
+  test tests[] = {
+    {
+      "print any_of",
+      []{
+        std::ostringstream os;
+        os << any_of{1,3,5};
+        auto s = os.str();
+        REQUIRE(s == "any_of{1,3,5}");
+      }
+    },
+    {
+      "print none_of",
+      []{
+        std::ostringstream os;
+        os << none_of{1,2,3};
+        auto s = os.str();
+        REQUIRE(s == "none_of{1,2,3}")
+      }
+    },
+    {
+      "print all_of",
+      []{
+        std::ostringstream os;
+        os << all_of{1,2,3};
+        auto s = os.str();
+        REQUIRE(s == "all_of{1,2,3}")
+      }
+    }
+
+  };
+  int failures = 0;
+  for (auto& t : tests)
+  {
+    try {
+      std::cout << std::setw(60) << std::left << t.name << ' ';
+      t.test_func();
+      std::cout << "pass\n";
+    }
+    catch (const char* m)
+    {
+      ++failures;
+      std::cout << "failed: " << m << '\n';
+    }
+  }
+  if (!failures)
+  {
+    std::puts("\ncool!");
+  }
+  else
+  {
+    std::puts("\nbummer!");
+  }
+  return failures;
 }
