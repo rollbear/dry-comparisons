@@ -14,12 +14,14 @@ class any_of : std::tuple<T...>
 public:
     using std::tuple<T...>::tuple;
     template <typename U>
-    constexpr bool operator==(const U& u) const {
+    constexpr auto operator==(const U& u) const
+    -> decltype(((std::declval<const T&>() == u) || ...))
+    {
         return std::apply([&](const auto& ... a) { return ((a == u) || ...);},
                           get());
     }
-    template <typename U>
-    friend constexpr bool operator==(const U& u, const any_of& a)
+    template <typename U, typename = std::enable_if_t<!std::is_same<U, any_of>{}>>
+    friend constexpr auto operator==(const U& u, const any_of& a) -> decltype(a == u)
     {
         return a == u;
     }
@@ -28,8 +30,8 @@ public:
         return std::apply([&](const auto& ... a) { return ((a != u) && ...);},
                           get());
     }
-    template <typename U>
-    friend constexpr bool operator!=(const U& u, const any_of& a)
+    template <typename U, typename = std::enable_if_t<!std::is_same<U, any_of>{}>>
+    friend constexpr auto operator!=(const U& u, const any_of& a) -> decltype(a != u)
     {
         return a != u;
     }
@@ -38,8 +40,8 @@ public:
         return std::apply([&](const auto& ... a) { return ((a < u) || ...);},
                           get());
     }
-    template <typename U>
-    friend constexpr bool operator>(const U& u, const any_of& a)
+    template <typename U, typename = std::enable_if_t<!std::is_same<U, any_of>{}>>
+    friend constexpr auto operator>(const U& u, const any_of& a) -> decltype(a < u)
     {
         return a < u;
     }
@@ -48,8 +50,8 @@ public:
         return std::apply([&](const auto& ... a) { return ((a <= u) || ...);},
                           get());
     }
-    template <typename U>
-    friend constexpr bool operator>=(const U& u, const any_of& a)
+    template <typename U, typename = std::enable_if_t<!std::is_same<U, any_of>{}>>
+    friend constexpr auto operator>=(const U& u, const any_of& a) -> decltype(a <= u)
     {
         return a <= u;
     }
@@ -58,8 +60,8 @@ public:
         return std::apply([&](const auto& ... a) { return ((a > u) || ...);},
                           get());
     }
-    template <typename U>
-    friend constexpr bool operator<(const U& u, const any_of& a)
+    template <typename U, typename = std::enable_if_t<!std::is_same<U, any_of>{}>>
+    friend constexpr auto operator<(const U& u, const any_of& a) -> decltype(a > u)
     {
         return a > u;
     }
@@ -69,8 +71,8 @@ public:
                           get());
 	
     }
-    template <typename U>
-    friend constexpr bool operator<=(const U& u, const any_of& a)
+    template <typename U, typename = std::enable_if_t<!std::is_same<U, any_of>{}>>
+    friend constexpr auto operator<=(const U& u, const any_of& a) -> decltype(a >= u)
     {
         return a >= u;
     }
@@ -88,8 +90,8 @@ public:
         return std::apply([&](const auto& ... a) { return !((a == u) || ...);},
                           get());
     }
-    template <typename U>
-    friend constexpr bool operator==(const U& u, const none_of& a)
+    template <typename U, typename = std::enable_if_t<!std::is_same<U, none_of>{}>>
+    friend constexpr auto operator==(const U& u, const none_of& a) -> decltype(a == u)
     {
         return a == u;
     }
@@ -98,8 +100,8 @@ public:
         return std::apply([&](const auto& ... a) { return !((a != u) && ...);},
                           get());
     }
-    template <typename U>
-    friend constexpr bool operator!=(const U& u, const none_of& a)
+    template <typename U, typename = std::enable_if_t<!std::is_same<U, none_of>{}>>
+    friend constexpr auto operator!=(const U& u, const none_of& a) -> decltype(a != u)
     {
         return a == u;
     }
@@ -108,8 +110,8 @@ public:
         return std::apply([&](const auto& ... a) { return !((a < u) || ...);},
                           get());
     }
-    template <typename U>
-    friend constexpr bool operator>(const U& u, const none_of& a)
+    template <typename U, typename = std::enable_if_t<!std::is_same<U, none_of>{}>>
+    friend constexpr auto operator>(const U& u, const none_of& a) -> decltype(a < u)
     {
         return a < u;
     }
@@ -118,8 +120,8 @@ public:
         return std::apply([&](const auto& ... a) { return !((a <= u) || ...);},
                           get());
     }
-    template <typename U>
-    friend constexpr bool operator>=(const U& u, const none_of& a)
+    template <typename U, typename = std::enable_if_t<!std::is_same<U, none_of>{}>>
+    friend constexpr auto operator>=(const U& u, const none_of& a) -> decltype(a <= u)
     {
         return a <= u;
     }
@@ -128,8 +130,8 @@ public:
         return std::apply([&](const auto& ... a) { return !((a > u) || ...);},
                           get());
     }
-    template <typename U>
-    friend constexpr bool operator<(const U& u, const none_of& a)
+    template <typename U, typename = std::enable_if_t<!std::is_same<U, none_of>{}>>
+    friend constexpr auto operator<(const U& u, const none_of& a) -> decltype(a > u)
     {
         return a > u;
     }
@@ -138,8 +140,8 @@ public:
         return std::apply([&](const auto& ... a) { return !((a >= u) || ...);},
                           get());
     }
-    template <typename U>
-    friend constexpr bool operator<=(const U& u, const none_of& a)
+    template <typename U, typename = std::enable_if_t<!std::is_same<U, none_of>{}>>
+    friend constexpr auto operator<=(const U& u, const none_of& a) -> decltype(a >= u)
     {
         return a >= u;
     }
@@ -157,8 +159,8 @@ public:
         return std::apply([&](const auto& ... a) { return ((a == u) && ...);},
                           get());
     }
-    template <typename U>
-    friend constexpr bool operator==(const U& u, const all_of& a)
+    template <typename U, typename = std::enable_if_t<!std::is_same<U, all_of>{}>>
+    friend constexpr auto operator==(const U& u, const all_of& a) -> decltype(a == u)
     {
         return a == u;
     }
@@ -167,8 +169,8 @@ public:
         return std::apply([&](const auto& ... a) { return ((a != u) || ...);},
                           get());
     }
-    template <typename U>
-    friend constexpr bool operator!=(const U& u, const all_of& a)
+    template <typename U, typename = std::enable_if_t<!std::is_same<U, all_of>{}>>
+    friend constexpr auto operator!=(const U& u, const all_of& a) -> decltype(a != u)
     {
         return a != u;
     }
@@ -177,8 +179,8 @@ public:
         return std::apply([&](const auto& ... a) { return ((a < u) && ...);},
                           get());
     }
-    template <typename U>
-    friend constexpr bool operator>(const U& u, const all_of& a)
+    template <typename U, typename = std::enable_if_t<!std::is_same<U, all_of>{}>>
+    friend constexpr auto operator>(const U& u, const all_of& a) -> decltype(a < u)
     {
         return a < u;
     }
@@ -187,8 +189,8 @@ public:
         return std::apply([&](const auto& ... a) { return ((a <= u) && ...);},
                           get());
     }
-    template <typename U>
-    friend constexpr bool operator>=(const U& u, const all_of& a)
+    template <typename U, typename = std::enable_if_t<!std::is_same<U, all_of>{}>>
+    friend constexpr auto operator>=(const U& u, const all_of& a) -> decltype(a <= u)
     {
         return a <= u;
     }
@@ -197,8 +199,8 @@ public:
         return std::apply([&](const auto& ... a) { return ((a > u) && ...);},
                           get());
     }
-    template <typename U>
-    friend constexpr bool operator<(const U& u, const all_of& a)
+    template <typename U, typename = std::enable_if_t<!std::is_same<U, all_of>{}>>
+    friend constexpr auto operator<(const U& u, const all_of& a) -> decltype(a > u)
     {
         return a > u;
     }
@@ -207,8 +209,8 @@ public:
         return std::apply([&](const auto& ... a) { return ((a >= u) && ...);},
                           get());
     }
-    template <typename U>
-    friend constexpr bool operator<=(const U& u, const all_of& a)
+    template <typename U, typename = std::enable_if_t<!std::is_same<U, all_of>{}>>
+    friend constexpr auto operator<=(const U& u, const all_of& a) -> decltype(a >= u)
     {
         return a >= u;
     }
