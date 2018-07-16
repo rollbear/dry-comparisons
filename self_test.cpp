@@ -58,8 +58,8 @@ static_assert(!(x >= all_of(0,4,1,2)));
 
 static_assert(x == none_of(1,2,4));
 static_assert(!(x == none_of(1,3,4)));
-static_assert(x != none_of(1,2,4));
-static_assert(!(x != none_of(1,2,3,4)));
+static_assert(x != none_of(1,2,4,3));
+static_assert(!(x != none_of(1,2,4)));
 
 static_assert(x < none_of(0,1,2,3));
 static_assert(!(x < none_of(4,0,1,2)));

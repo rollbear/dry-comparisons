@@ -103,7 +103,7 @@ public:
     template <typename U, typename = std::enable_if_t<!std::is_same<U, none_of>{}>>
     friend constexpr auto operator!=(const U& u, const none_of& a) -> decltype(a != u)
     {
-        return a == u;
+        return a != u;
     }
     template <typename U>
     constexpr bool operator<(const U& u) const {
