@@ -95,14 +95,15 @@ public:
     constexpr bool operator>=(const U& u) const {
         return std::apply([&](const auto& ... a) { return ((a >= u) || ...);},
                           get());
-	
+
     }
     template <typename U, typename = std::enable_if_t<!std::is_same<U, any_of>{}>>
     friend constexpr auto operator<=(const U& u, const any_of& a) -> decltype(a >= u)
     {
         return a >= u;
     }
-    template <typename = decltype(internal::member_print(std::declval<const std::tuple<T...>&>()))>
+    template <typename V = std::tuple<T...>,
+              typename = decltype(internal::member_print(std::declval<const V&>()))>
     friend std::ostream& operator<<(std::ostream& os, const any_of& self)
     {
       return os << "any_of{" << internal::member_print{self.get()} << '}';
@@ -180,7 +181,8 @@ public:
     {
         return a >= u;
     }
-    template <typename = decltype(internal::member_print(std::declval<const std::tuple<T...>&>()))>
+    template <typename V = std::tuple<T...>,
+              typename = decltype(internal::member_print(std::declval<const V&>()))>
     friend std::ostream& operator<<(std::ostream& os, const none_of& self)
     {
       return os << "none_of{" << internal::member_print{self.get()} << '}';
@@ -258,7 +260,8 @@ public:
     {
         return a >= u;
     }
-    template <typename = decltype(internal::member_print(std::declval<const std::tuple<T...>&>()))>
+    template <typename V = std::tuple<T...>,
+              typename = decltype(internal::member_print(std::declval<const V&>()))>
     friend std::ostream& operator<<(std::ostream& os, const all_of& self)
     {
       return os << "all_of{" << internal::member_print{self.get()} << '}';
