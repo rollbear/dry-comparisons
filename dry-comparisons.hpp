@@ -22,7 +22,7 @@ public:
     {
       std::apply([&os](const auto& ... v) {
         int first = 1;
-        ((os << ","+std::exchange(first,0) << v),...);
+        ((os << &","[std::exchange(first,0)] << v),...);
       },self.m);
       return os;
     }

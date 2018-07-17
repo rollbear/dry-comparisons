@@ -20,6 +20,7 @@ using rollbear::any_of;
 using rollbear::none_of;
 
 constexpr int x = 3;
+constexpr const char* nullstr = nullptr;
 
 static_assert(x == any_of(1,3,5));
 static_assert(!(x == any_of(1,2,5)));
@@ -140,95 +141,95 @@ int main()
     {
       "all_of is true if all members are true",
       []{
-        int x;
-        auto b = bool(all_of{true, 1, &x});
+        int v;
+        auto b = bool(all_of{true, 1, &v});
         REQUIRE(b);
       }
     },
     {
       "all_of is false with nullptr",
       []{
-        auto b = bool(all_of{true, 1, (const char*)nullptr});
+        auto b = bool(all_of{true, 1, nullstr});
         REQUIRE(!b);
       }
     },
     {
       "all_of is false with int(0)",
       [] {
-        int x = 0;
-        auto b = bool(all_of{true, x, &x});
+        int v = 0;
+        auto b = bool(all_of{true, v, &v});
         REQUIRE(!b);
       }
     },
     {
       "all_of isfalse with false member",
       [] {
-        int x = 1;
-        auto b = bool(all_of(false, x, &x));
+        int v = 1;
+        auto b = bool(all_of(false, v, &v));
         REQUIRE(!b);
       }
     },
     {
       "none_of is true if all members are false",
       []{
-        int x = 0;
-        auto b = bool(none_of{false, x, (const char*)nullptr});
+        int v = 0;
+        auto b = bool(none_of{false, v, nullstr});
         REQUIRE(b);
       }
     },
     {
       "none_of is false if a member is a non-nullptr",
       []{
-        int x = 0;
-        auto b = bool(none_of{false, x, &x});
+        int v = 0;
+        auto b = bool(none_of{false, v, &v});
         REQUIRE(!b);
       }
     },
     {
       "none_of is false if a member is a non-zero int",
       []{
-        int x = 1;
-        auto b = bool(none_of{false, x, (const char*)nullptr});
+        int v = 1;
+        auto b = bool(none_of{false, v, nullstr});
         REQUIRE(!b);
       }
     },
     {
       "none_of is false if a member true",
       []{
-        int x = 0;
-        auto b = bool(none_of{true, x, (const char*)nullptr});
+        int v = 0;
+        auto b = bool(none_of{true, v, nullstr});
         REQUIRE(!b);
       }
     },
     {
       "any_of is false all members are false",
       []{
-        int x = 0;
-        auto b = bool(any_of{false, x, (const char*)nullptr});
+        int v = 0;
+        auto b = bool(any_of{false, v, nullstr});
         REQUIRE(!b);
       }
     },
     {
       "any_of is true if a member is a non-nullptr",
       []{
-        int x = 0;
-        auto b = bool(any_of{false, x, &x});
+        int v = 0;
+        auto b = bool(any_of{false, v, &v});
         REQUIRE(b);
       }
     },
     {
       "any_of is true if a member is a non-zero int",
       []{
-        int x = 1;
-        auto b = bool(any_of{false, x, (const char*)nullptr});
+        int v = 1;
+        auto b = bool(any_of{false, v, nullstr});
         REQUIRE(b);
       }
     },
     {
       "any_of is true if a member is true",
       []{
-        int x = 0;
-        auto b = bool(any_of{true, x, (const char*)nullptr});
+        int v = 0;
+        auto b = bool(any_of{true, v, nullstr});
         REQUIRE(b);
       }
     }
