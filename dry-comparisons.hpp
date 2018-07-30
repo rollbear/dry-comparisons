@@ -113,7 +113,7 @@ public:
         return std::apply([](const auto& ... a) { return (a || ...);}, get());
     }
 private:
-    constexpr const std::tuple<T...> get() const { return *this;}
+    constexpr const std::tuple<T...>& get() const { return *this;}
 };
 
 template <typename ... T>
@@ -192,7 +192,7 @@ public:
         return std::apply([](const auto& ... a) { return !(a || ...);}, get());
     }
 private:
-    constexpr const std::tuple<T...> get() const { return *this;}
+    constexpr const std::tuple<T...>& get() const { return *this;}
 };
 
 template <typename ... T>
@@ -271,7 +271,7 @@ public:
       return std::apply([](const auto& ... a) { return (a && ...);}, get());
     }
 private:
-    constexpr const std::tuple<T...> get() const { return *this;}
+    constexpr const std::tuple<T...>& get() const { return *this;}
 };
 
 
