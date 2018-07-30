@@ -8,7 +8,7 @@ Public domain.
 ## Usage
 
 ```Cpp
-using rollbear::one_of;
+using rollbear::any_of;
 
 class Machine
 {
@@ -38,5 +38,5 @@ of `any_of`, `all_of` and `none_of` may be used directly as boolean expressions.
 
 It is also possible to do relational comparisons. For example:
 
-`assert(all_of(s1, s2) > ".")`, providing the variables `s1` and `s2` are
+`assert(all_of(s1, s2) > ".")`, providing the expressions `s1` and `s2` are
 greater-than comparable with a string literal.
