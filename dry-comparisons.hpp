@@ -52,7 +52,9 @@ public:
         return a == u;
     }
     template <typename U>
-    constexpr bool operator!=(const U& u) const {
+    constexpr auto operator!=(const U& u) const
+    -> decltype(((std::declval<const T&>() != u) && ...))
+    {
         return std::apply([&](const auto& ... a) { return ((a != u) && ...);},
                           get());
     }
@@ -62,7 +64,9 @@ public:
         return a != u;
     }
     template <typename U>
-    constexpr bool operator<(const U& u) const {
+    constexpr auto operator<(const U& u) const
+    -> decltype(((std::declval<const T&>() < u) || ...))
+    {
         return std::apply([&](const auto& ... a) { return ((a < u) || ...);},
                           get());
     }
@@ -72,7 +76,9 @@ public:
         return a < u;
     }
     template <typename U>
-    constexpr bool operator<=(const U& u) const {
+    constexpr auto operator<=(const U& u) const
+    -> decltype(((std::declval<const T&>() <= u) || ...))
+    {
         return std::apply([&](const auto& ... a) { return ((a <= u) || ...);},
                           get());
     }
@@ -82,7 +88,9 @@ public:
         return a <= u;
     }
     template <typename U>
-    constexpr bool operator>(const U& u) const {
+    constexpr auto operator>(const U& u) const
+    -> decltype(((std::declval<const T&>() > u) || ...))
+    {
         return std::apply([&](const auto& ... a) { return ((a > u) || ...);},
                           get());
     }
@@ -92,7 +100,9 @@ public:
         return a > u;
     }
     template <typename U>
-    constexpr bool operator>=(const U& u) const {
+    constexpr auto operator>=(const U& u) const
+    -> decltype(((std::declval<const T&>() >= u) || ...))
+    {
         return std::apply([&](const auto& ... a) { return ((a >= u) || ...);},
                           get());
 
@@ -122,7 +132,9 @@ class none_of : std::tuple<T...>
 public:
     using std::tuple<T...>::tuple;
     template <typename U>
-    constexpr bool operator==(const U& u) const {
+    constexpr auto operator==(const U& u) const
+    -> decltype(!((std::declval<const T&>() == u) || ...))
+    {
         return std::apply([&](const auto& ... a) { return !((a == u) || ...);},
                           get());
     }
@@ -132,7 +144,9 @@ public:
         return a == u;
     }
     template <typename U>
-    constexpr bool operator!=(const U& u) const {
+    constexpr auto operator!=(const U& u) const
+    -> decltype(!((std::declval<const T&>() != u) && ...))
+    {
         return std::apply([&](const auto& ... a) { return !((a != u) && ...);},
                           get());
     }
@@ -142,7 +156,9 @@ public:
         return a != u;
     }
     template <typename U>
-    constexpr bool operator<(const U& u) const {
+    constexpr auto operator<(const U& u) const
+    -> decltype(!((std::declval<const T&>() < u) || ...))
+    {
         return std::apply([&](const auto& ... a) { return !((a < u) || ...);},
                           get());
     }
@@ -152,7 +168,9 @@ public:
         return a < u;
     }
     template <typename U>
-    constexpr bool operator<=(const U& u) const {
+    constexpr auto operator<=(const U& u) const
+    -> decltype(!((std::declval<const T&>() <= u) || ...))
+    {
         return std::apply([&](const auto& ... a) { return !((a <= u) || ...);},
                           get());
     }
@@ -162,7 +180,9 @@ public:
         return a <= u;
     }
     template <typename U>
-    constexpr bool operator>(const U& u) const {
+    constexpr auto operator>(const U& u) const
+    -> decltype(!((std::declval<const T&>() > u) || ...))
+    {
         return std::apply([&](const auto& ... a) { return !((a > u) || ...);},
                           get());
     }
@@ -172,7 +192,9 @@ public:
         return a > u;
     }
     template <typename U>
-    constexpr bool operator>=(const U& u) const {
+    constexpr auto operator>=(const U& u) const
+    -> decltype(!((std::declval<const T&>() >= u) || ...))
+    {
         return std::apply([&](const auto& ... a) { return !((a >= u) || ...);},
                           get());
     }
@@ -201,7 +223,9 @@ class all_of : std::tuple<T...>
 public:
     using std::tuple<T...>::tuple;
     template <typename U>
-    constexpr bool operator==(const U& u) const {
+    constexpr auto operator==(const U& u) const
+    -> decltype(((std::declval<const T&>() == u) && ...))
+    {
         return std::apply([&](const auto& ... a) { return ((a == u) && ...);},
                           get());
     }
@@ -211,7 +235,9 @@ public:
         return a == u;
     }
     template <typename U>
-    constexpr bool operator!=(const U& u) const {
+    constexpr auto operator!=(const U& u) const
+    -> decltype(((std::declval<const T&>() == u) || ...))
+    {
         return std::apply([&](const auto& ... a) { return ((a != u) || ...);},
                           get());
     }
@@ -221,7 +247,9 @@ public:
         return a != u;
     }
     template <typename U>
-    constexpr bool operator<(const U& u) const {
+    constexpr auto operator<(const U& u) const
+    -> decltype(((std::declval<const T&>() < u) && ...))
+    {
         return std::apply([&](const auto& ... a) { return ((a < u) && ...);},
                           get());
     }
@@ -231,7 +259,9 @@ public:
         return a < u;
     }
     template <typename U>
-    constexpr bool operator<=(const U& u) const {
+    constexpr auto operator<=(const U& u) const
+    -> decltype(((std::declval<const T&>() <= u) && ...))
+    {
         return std::apply([&](const auto& ... a) { return ((a <= u) && ...);},
                           get());
     }
@@ -241,7 +271,9 @@ public:
         return a <= u;
     }
     template <typename U>
-    constexpr bool operator>(const U& u) const {
+    constexpr auto operator>(const U& u) const
+    -> decltype(((std::declval<const T&>() > u) && ...))
+    {
         return std::apply([&](const auto& ... a) { return ((a > u) && ...);},
                           get());
     }
@@ -251,7 +283,9 @@ public:
         return a > u;
     }
     template <typename U>
-    constexpr bool operator>=(const U& u) const {
+    constexpr auto operator>=(const U& u) const
+    -> decltype(((std::declval<const T&>() >= u) && ...))
+    {
         return std::apply([&](const auto& ... a) { return ((a >= u) && ...);},
                           get());
     }
