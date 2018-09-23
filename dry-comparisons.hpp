@@ -41,66 +41,82 @@ public:
     using std::tuple<T...>::tuple;
     template <typename U>
     constexpr auto operator==(const U& u) const
+    noexcept(noexcept(((std::declval<const T&>() == u) || ...)))
     -> decltype(((std::declval<const T&>() == u) || ...))
     {
         return std::apply([&](const auto& ... a) { return ((a == u) || ...);},
                           get());
     }
     template <typename U, typename = std::enable_if_t<!std::is_same<U, any_of>{}>>
-    friend constexpr auto operator==(const U& u, const any_of& a) -> decltype(a == u)
+    friend constexpr auto operator==(const U& u, const any_of& a)
+    noexcept(noexcept(a == u))
+    -> decltype(a == u)
     {
         return a == u;
     }
     template <typename U>
     constexpr auto operator!=(const U& u) const
+    noexcept(noexcept(((std::declval<const T&>() != u) && ...)))
     -> decltype(((std::declval<const T&>() != u) && ...))
     {
         return std::apply([&](const auto& ... a) { return ((a != u) && ...);},
                           get());
     }
     template <typename U, typename = std::enable_if_t<!std::is_same<U, any_of>{}>>
-    friend constexpr auto operator!=(const U& u, const any_of& a) -> decltype(a != u)
+    friend constexpr auto operator!=(const U& u, const any_of& a)
+    noexcept(noexcept(a != u))
+    -> decltype(a != u)
     {
         return a != u;
     }
     template <typename U>
     constexpr auto operator<(const U& u) const
+    noexcept(noexcept(((std::declval<const T&>() < u) || ...)))
     -> decltype(((std::declval<const T&>() < u) || ...))
     {
         return std::apply([&](const auto& ... a) { return ((a < u) || ...);},
                           get());
     }
     template <typename U, typename = std::enable_if_t<!std::is_same<U, any_of>{}>>
-    friend constexpr auto operator>(const U& u, const any_of& a) -> decltype(a < u)
+    friend constexpr auto operator>(const U& u, const any_of& a)
+    noexcept(noexcept(a < u))
+    -> decltype(a < u)
     {
         return a < u;
     }
     template <typename U>
     constexpr auto operator<=(const U& u) const
+    noexcept(noexcept(((std::declval<const T&>() <= u) || ...)))
     -> decltype(((std::declval<const T&>() <= u) || ...))
     {
         return std::apply([&](const auto& ... a) { return ((a <= u) || ...);},
                           get());
     }
     template <typename U, typename = std::enable_if_t<!std::is_same<U, any_of>{}>>
-    friend constexpr auto operator>=(const U& u, const any_of& a) -> decltype(a <= u)
+    friend constexpr auto operator>=(const U& u, const any_of& a)
+    noexcept(noexcept(a <= u))
+    -> decltype(a <= u)
     {
         return a <= u;
     }
     template <typename U>
     constexpr auto operator>(const U& u) const
+    noexcept(noexcept(((std::declval<const T&>() > u) || ...)))
     -> decltype(((std::declval<const T&>() > u) || ...))
     {
         return std::apply([&](const auto& ... a) { return ((a > u) || ...);},
                           get());
     }
     template <typename U, typename = std::enable_if_t<!std::is_same<U, any_of>{}>>
-    friend constexpr auto operator<(const U& u, const any_of& a) -> decltype(a > u)
+    friend constexpr auto operator<(const U& u, const any_of& a)
+    noexcept(noexcept(a > u))
+    -> decltype(a > u)
     {
         return a > u;
     }
     template <typename U>
     constexpr auto operator>=(const U& u) const
+    noexcept(noexcept(((std::declval<const T&>() >= u) || ...)))
     -> decltype(((std::declval<const T&>() >= u) || ...))
     {
         return std::apply([&](const auto& ... a) { return ((a >= u) || ...);},
@@ -108,7 +124,9 @@ public:
 
     }
     template <typename U, typename = std::enable_if_t<!std::is_same<U, any_of>{}>>
-    friend constexpr auto operator<=(const U& u, const any_of& a) -> decltype(a >= u)
+    friend constexpr auto operator<=(const U& u, const any_of& a)
+    noexcept(noexcept(a >= u))
+    -> decltype(a >= u)
     {
         return a >= u;
     }
@@ -119,6 +137,7 @@ public:
       return os << "any_of{" << internal::member_print{self.get()} << '}';
     }
     constexpr explicit operator bool() const
+    noexcept(noexcept((std::declval<const T&>() || ...)))
     {
         return std::apply([](const auto& ... a) { return (a || ...);}, get());
     }
@@ -133,73 +152,91 @@ public:
     using std::tuple<T...>::tuple;
     template <typename U>
     constexpr auto operator==(const U& u) const
+    noexcept(noexcept(!((std::declval<const T&>() == u) || ...)))
     -> decltype(!((std::declval<const T&>() == u) || ...))
     {
         return std::apply([&](const auto& ... a) { return !((a == u) || ...);},
                           get());
     }
     template <typename U, typename = std::enable_if_t<!std::is_same<U, none_of>{}>>
-    friend constexpr auto operator==(const U& u, const none_of& a) -> decltype(a == u)
+    friend constexpr auto operator==(const U& u, const none_of& a)
+    noexcept(noexcept(a == u))
+    -> decltype(a == u)
     {
         return a == u;
     }
     template <typename U>
     constexpr auto operator!=(const U& u) const
+    noexcept(noexcept(!((std::declval<const T&>() != u) && ...)))
     -> decltype(!((std::declval<const T&>() != u) && ...))
     {
         return std::apply([&](const auto& ... a) { return !((a != u) && ...);},
                           get());
     }
     template <typename U, typename = std::enable_if_t<!std::is_same<U, none_of>{}>>
-    friend constexpr auto operator!=(const U& u, const none_of& a) -> decltype(a != u)
+    friend constexpr auto operator!=(const U& u, const none_of& a)
+    noexcept(noexcept(a != u))
+    -> decltype(a != u)
     {
         return a != u;
     }
     template <typename U>
     constexpr auto operator<(const U& u) const
+    noexcept(noexcept(!((std::declval<const T&>() < u) || ...)))
     -> decltype(!((std::declval<const T&>() < u) || ...))
     {
         return std::apply([&](const auto& ... a) { return !((a < u) || ...);},
                           get());
     }
     template <typename U, typename = std::enable_if_t<!std::is_same<U, none_of>{}>>
-    friend constexpr auto operator>(const U& u, const none_of& a) -> decltype(a < u)
+    friend constexpr auto operator>(const U& u, const none_of& a)
+    noexcept(noexcept(a < u))
+    -> decltype(a < u)
     {
         return a < u;
     }
     template <typename U>
     constexpr auto operator<=(const U& u) const
+    noexcept(noexcept(!((std::declval<const T&>() <= u) || ...)))
     -> decltype(!((std::declval<const T&>() <= u) || ...))
     {
         return std::apply([&](const auto& ... a) { return !((a <= u) || ...);},
                           get());
     }
     template <typename U, typename = std::enable_if_t<!std::is_same<U, none_of>{}>>
-    friend constexpr auto operator>=(const U& u, const none_of& a) -> decltype(a <= u)
+    friend constexpr auto operator>=(const U& u, const none_of& a)
+    noexcept(noexcept(a <= u))
+    -> decltype(a <= u)
     {
         return a <= u;
     }
     template <typename U>
     constexpr auto operator>(const U& u) const
+    noexcept(noexcept(!((std::declval<const T&>() > u) || ...)))
     -> decltype(!((std::declval<const T&>() > u) || ...))
     {
         return std::apply([&](const auto& ... a) { return !((a > u) || ...);},
                           get());
     }
     template <typename U, typename = std::enable_if_t<!std::is_same<U, none_of>{}>>
-    friend constexpr auto operator<(const U& u, const none_of& a) -> decltype(a > u)
+    friend constexpr auto operator<(const U& u, const none_of& a)
+    noexcept(noexcept(a > u))
+    -> decltype(a > u)
     {
         return a > u;
     }
     template <typename U>
     constexpr auto operator>=(const U& u) const
+    noexcept(noexcept(!((std::declval<const T&>() >= u) || ...)))
     -> decltype(!((std::declval<const T&>() >= u) || ...))
     {
         return std::apply([&](const auto& ... a) { return !((a >= u) || ...);},
                           get());
     }
     template <typename U, typename = std::enable_if_t<!std::is_same<U, none_of>{}>>
-    friend constexpr auto operator<=(const U& u, const none_of& a) -> decltype(a >= u)
+    friend constexpr auto operator<=(const U& u, const none_of& a)
+    noexcept(noexcept(a >= u))
+    -> decltype(a >= u)
     {
         return a >= u;
     }
@@ -210,6 +247,7 @@ public:
       return os << "none_of{" << internal::member_print{self.get()} << '}';
     }
     constexpr explicit operator bool() const
+    noexcept(noexcept(!(std::declval<const T&>() || ...)))
     {
         return std::apply([](const auto& ... a) { return !(a || ...);}, get());
     }
@@ -224,73 +262,91 @@ public:
     using std::tuple<T...>::tuple;
     template <typename U>
     constexpr auto operator==(const U& u) const
+    noexcept(noexcept(((std::declval<const T&>() == u) && ...)))
     -> decltype(((std::declval<const T&>() == u) && ...))
     {
         return std::apply([&](const auto& ... a) { return ((a == u) && ...);},
                           get());
     }
     template <typename U, typename = std::enable_if_t<!std::is_same<U, all_of>{}>>
-    friend constexpr auto operator==(const U& u, const all_of& a) -> decltype(a == u)
+    friend constexpr auto operator==(const U& u, const all_of& a)
+    noexcept(noexcept(a == u))
+    -> decltype(a == u)
     {
         return a == u;
     }
     template <typename U>
     constexpr auto operator!=(const U& u) const
+    noexcept(noexcept(((std::declval<const T&>() == u) || ...)))
     -> decltype(((std::declval<const T&>() == u) || ...))
     {
         return std::apply([&](const auto& ... a) { return ((a != u) || ...);},
                           get());
     }
     template <typename U, typename = std::enable_if_t<!std::is_same<U, all_of>{}>>
-    friend constexpr auto operator!=(const U& u, const all_of& a) -> decltype(a != u)
+    friend constexpr auto operator!=(const U& u, const all_of& a)
+    noexcept(noexcept(a != u))
+    -> decltype(a != u)
     {
         return a != u;
     }
     template <typename U>
     constexpr auto operator<(const U& u) const
+    noexcept(noexcept(((std::declval<const T&>() < u) && ...)))
     -> decltype(((std::declval<const T&>() < u) && ...))
     {
         return std::apply([&](const auto& ... a) { return ((a < u) && ...);},
                           get());
     }
     template <typename U, typename = std::enable_if_t<!std::is_same<U, all_of>{}>>
-    friend constexpr auto operator>(const U& u, const all_of& a) -> decltype(a < u)
+    friend constexpr auto operator>(const U& u, const all_of& a)
+    noexcept(noexcept(a < u))
+    -> decltype(a < u)
     {
         return a < u;
     }
     template <typename U>
     constexpr auto operator<=(const U& u) const
+    noexcept(noexcept(((std::declval<const T&>() <= u) && ...)))
     -> decltype(((std::declval<const T&>() <= u) && ...))
     {
         return std::apply([&](const auto& ... a) { return ((a <= u) && ...);},
                           get());
     }
     template <typename U, typename = std::enable_if_t<!std::is_same<U, all_of>{}>>
-    friend constexpr auto operator>=(const U& u, const all_of& a) -> decltype(a <= u)
+    friend constexpr auto operator>=(const U& u, const all_of& a)
+    noexcept(noexcept(a <= u))
+    -> decltype(a <= u)
     {
         return a <= u;
     }
     template <typename U>
     constexpr auto operator>(const U& u) const
+    noexcept(noexcept(((std::declval<const T&>() > u) && ...)))
     -> decltype(((std::declval<const T&>() > u) && ...))
     {
         return std::apply([&](const auto& ... a) { return ((a > u) && ...);},
                           get());
     }
     template <typename U, typename = std::enable_if_t<!std::is_same<U, all_of>{}>>
-    friend constexpr auto operator<(const U& u, const all_of& a) -> decltype(a > u)
+    friend constexpr auto operator<(const U& u, const all_of& a)
+    noexcept(noexcept(a > u))
+    -> decltype(a > u)
     {
         return a > u;
     }
     template <typename U>
     constexpr auto operator>=(const U& u) const
+    noexcept(noexcept(((std::declval<const T&>() >= u) && ...)))
     -> decltype(((std::declval<const T&>() >= u) && ...))
     {
         return std::apply([&](const auto& ... a) { return ((a >= u) && ...);},
                           get());
     }
     template <typename U, typename = std::enable_if_t<!std::is_same<U, all_of>{}>>
-    friend constexpr auto operator<=(const U& u, const all_of& a) -> decltype(a >= u)
+    friend constexpr auto operator<=(const U& u, const all_of& a)
+    noexcept(noexcept(a >= u))
+    -> decltype(a >= u)
     {
         return a >= u;
     }
@@ -301,6 +357,7 @@ public:
       return os << "all_of{" << internal::member_print{self.get()} << '}';
     }
     constexpr explicit operator bool() const
+    noexcept(noexcept((std::declval<const T&>() && ...)))
     {
       return std::apply([](const auto& ... a) { return (a && ...);}, get());
     }
