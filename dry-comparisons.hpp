@@ -34,6 +34,8 @@ template <typename ... T>
 member_print(const std::tuple<T...>&) -> member_print<T...>;
 
 }
+
+
 template <typename ... T>
 class any_of : std::tuple<T...>
 {
@@ -141,7 +143,29 @@ public:
     {
         return std::apply([](const auto& ... a) { return (a || ...);}, get());
     }
+    template <typename ... Ts>
+    constexpr auto operator()(Ts&& ... ts) const
+    noexcept(noexcept(any_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>
+        {
+            std::declval<const T&>()(std::forward<Ts>(ts)...)...
+        }
+    ))
+    -> any_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>
+    {
+        return call(std::index_sequence_for<T...>{}, std::forward<Ts>(ts)...);
+    }
 private:
+    template <std::size_t ... I, typename ... Ts>
+    constexpr auto call(std::index_sequence<I...>, Ts&& ... ts) const
+    noexcept(noexcept(any_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>
+        {
+            std::declval<const T&>()(std::forward<Ts>(ts)...)...
+        }
+    ))
+    -> any_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>
+    {
+        return {std::get<I>(get())(std::forward<Ts>(ts)...)...};
+    }
     constexpr const std::tuple<T...>& get() const { return *this;}
 };
 
@@ -251,7 +275,31 @@ public:
     {
         return std::apply([](const auto& ... a) { return !(a || ...);}, get());
     }
+
+    template <typename ... Ts>
+    constexpr auto operator()(Ts&& ... ts) const
+    noexcept(noexcept(none_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>
+        {
+            std::declval<const T&>()(std::forward<Ts>(ts)...)...
+        }
+    ))
+    -> none_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>
+    {
+        return call(std::index_sequence_for<T...>{}, std::forward<Ts>(ts)...);
+    }
 private:
+    template <std::size_t ... I, typename ... Ts>
+    constexpr auto call(std::index_sequence<I...>, Ts&& ... ts) const
+    noexcept(noexcept(none_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>
+        {
+            std::declval<const T&>()(std::forward<Ts>(ts)...)...
+        }
+    ))
+    -> none_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>
+    {
+        return {std::get<I>(get())(std::forward<Ts>(ts)...)...};
+    }
+
     constexpr const std::tuple<T...>& get() const { return *this;}
 };
 
@@ -361,7 +409,29 @@ public:
     {
       return std::apply([](const auto& ... a) { return (a && ...);}, get());
     }
+    template <typename ... Ts>
+    constexpr auto operator()(Ts&& ... ts) const
+    noexcept(noexcept(all_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>
+        {
+            std::declval<const T&>()(std::forward<Ts>(ts)...)...
+        }
+    ))
+    -> all_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>
+    {
+        return call(std::index_sequence_for<T...>{}, std::forward<Ts>(ts)...);
+    }
 private:
+    template <std::size_t ... I, typename ... Ts>
+    constexpr auto call(std::index_sequence<I...>, Ts&& ... ts) const
+    noexcept(noexcept(all_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>
+        {
+            std::declval<const T&>()(std::forward<Ts>(ts)...)...
+        }
+    ))
+    -> all_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>
+    {
+        return {std::get<I>(get())(std::forward<Ts>(ts)...)...};
+    }
     constexpr const std::tuple<T...>& get() const { return *this;}
 };
 

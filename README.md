@@ -36,7 +36,16 @@ of `any_of`, `all_of` and `none_of` may be used directly as boolean expressions.
 * `bool(all_of{a,b,c}) == bool(a && b && c)`
 * `bool(none_of{a,b,c}) == !bool(a || b || c)`
 
-It is also possible to do relational comparisons. For example:
+*iff* the members are callable, the resulting object is also callable.
+
+* `any_of{std::plus{}, std::minus{}}(3,2) == 5`
+* `all_of{std::plus{}, std::minus{}}(3,2) > 0`
+* `none_of{std::plus{}, std::minus{}}(3,2) == 0`
+
+with SFINAE friendly checks that the calls can be made for the values given.
+
+Further more, it is also possible to do relational comparisons. For example:
 
 `assert(all_of(s1, s2) > ".")`, providing the expressions `s1` and `s2` are
 greater-than comparable with a string literal.
+

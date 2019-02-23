@@ -22,6 +22,9 @@ using rollbear::none_of;
 constexpr int x = 3;
 constexpr const char* nullstr = nullptr;
 
+template <int I>
+constexpr auto add = [](auto x) -> decltype(x+I){ return x + I;};
+
 static_assert(x == any_of(1,3,5));
 static_assert(!(x == any_of(1,2,5)));
 static_assert(x != any_of(1,2,5));
@@ -39,6 +42,8 @@ static_assert(!(x > any_of(4,3,5,6)));
 static_assert(x >= any_of(0,3,1,2));
 static_assert(!(x >= any_of(4,5,6)));
 
+static_assert(any_of{add<1>, add<2>, add<3>}(-2) == 0);
+static_assert(!(any_of{add<1>, add<2>, add<3>}(-2) == 3));
 
 
 static_assert(x == all_of(3,3,3));
@@ -58,6 +63,9 @@ static_assert(!(x > all_of(3,0,1,2)));
 static_assert(x >= all_of(0,3,1,2));
 static_assert(!(x >= all_of(0,4,1,2)));
 
+static_assert(!(all_of{add<1>, add<2>, add<3>}(-3) < 0));
+static_assert(all_of{add<1>, add<2>, add<3>}(-3) <= 3);
+
 
 static_assert(x == none_of(1,2,4));
 static_assert(!(x == none_of(1,3,4)));
@@ -75,6 +83,10 @@ static_assert(!(x > none_of(3,2,4,5)));
 
 static_assert(x >= none_of(4,5,6));
 static_assert(!(x >= none_of(6,4,5,3)));
+
+static_assert(!(none_of{add<1>, add<2>, add<3>}(-2) == 0));
+static_assert(none_of{add<1>, add<2>, add<3>}(-2) == 3);
+
 
 template <typename T>
 struct any_of_eq {
@@ -100,6 +112,13 @@ static_assert(is_detected_v<print_result_type, none_of<int,int>>);
 static_assert(!is_detected_v<print_result_type, none_of<int, nonprintable>>);
 static_assert(is_detected_v<print_result_type, all_of<int,int>>);
 static_assert(!is_detected_v<print_result_type, all_of<int, nonprintable>>);
+
+template <typename F, typename ... Ts>
+constexpr bool is_callable_v = is_detected_v<std::invoke_result_t, F, Ts...>;
+
+static_assert(!is_callable_v<decltype(all_of{add<1>,add<2>}), int,int>);
+static_assert(!is_callable_v<decltype(all_of{add<1>,add<2>}), void*>);
+static_assert(!is_callable_v<decltype(all_of{add<1>,add<2>})>);
 
 #define REQUIRE(...) if (__VA_ARGS__) {;} else { throw #__VA_ARGS__;}
 
