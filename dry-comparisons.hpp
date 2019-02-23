@@ -14,20 +14,23 @@ template <typename ... T>
 class member_print
 {
 public:
-  template <typename ... U>
-  member_print(const std::tuple<U...>& t, std::void_t<decltype(std::declval<std::ostream&>() << std::declval<const U&>())...>* = nullptr)
-    : m(t) {}
+    template <typename ... U>
+    member_print(
+        const std::tuple<U...>& t,
+        std::void_t<decltype(std::declval<std::ostream&>() << std::declval<const U&>())...>* = nullptr)
+    : m(t)
+    {}
     friend
     std::ostream& operator<<(std::ostream& os, const member_print& self)
     {
-      std::apply([&os](const auto& ... v) {
-        int first = 1;
-        ((os << &","[std::exchange(first,0)] << v),...);
-      },self.m);
-      return os;
+        std::apply([&os](const auto& ... v) {
+            int first = 1;
+            ((os << &","[std::exchange(first,0)] << v),...);
+        },self.m);
+        return os;
     }
 private:
-  const std::tuple<T...>& m;
+    const std::tuple<T...>& m;
 };
 
 template <typename ... T>
@@ -136,7 +139,7 @@ public:
               typename = decltype(internal::member_print(std::declval<const V&>()))>
     friend std::ostream& operator<<(std::ostream& os, const any_of& self)
     {
-      return os << "any_of{" << internal::member_print{self.get()} << '}';
+        return os << "any_of{" << internal::member_print{self.get()} << '}';
     }
     constexpr explicit operator bool() const
     noexcept(noexcept((std::declval<const T&>() || ...)))
@@ -268,7 +271,7 @@ public:
               typename = decltype(internal::member_print(std::declval<const V&>()))>
     friend std::ostream& operator<<(std::ostream& os, const none_of& self)
     {
-      return os << "none_of{" << internal::member_print{self.get()} << '}';
+        return os << "none_of{" << internal::member_print{self.get()} << '}';
     }
     constexpr explicit operator bool() const
     noexcept(noexcept(!(std::declval<const T&>() || ...)))
