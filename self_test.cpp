@@ -23,7 +23,7 @@ constexpr int x = 3;
 constexpr const char* nullstr = nullptr;
 
 template <int I>
-constexpr auto add = [](auto x) -> decltype(x+I){ return x + I;};
+constexpr auto add = [](auto v) -> decltype(v+I){ return v + I;};
 
 static_assert(x == any_of(1,3,5));
 static_assert(!(x == any_of(1,2,5)));
@@ -120,7 +120,7 @@ static_assert(!is_callable_v<decltype(all_of{add<1>,add<2>}), int,int>);
 static_assert(!is_callable_v<decltype(all_of{add<1>,add<2>}), void*>);
 static_assert(!is_callable_v<decltype(all_of{add<1>,add<2>})>);
 
-#define REQUIRE(...) if (__VA_ARGS__) {;} else { throw #__VA_ARGS__;}
+#define REQUIRE(...) [&](){if (__VA_ARGS__) {;} else { throw #__VA_ARGS__;}}()
 
 
 int main()
@@ -145,7 +145,7 @@ int main()
         std::ostringstream os;
         os << none_of{1,2,3};
         auto s = os.str();
-        REQUIRE(s == "none_of{1,2,3}")
+        REQUIRE(s == "none_of{1,2,3}");
       }
     },
     {
@@ -154,7 +154,7 @@ int main()
         std::ostringstream os;
         os << all_of{1,2,3};
         auto s = os.str();
-        REQUIRE(s == "all_of{1,2,3}")
+        REQUIRE(s == "all_of{1,2,3}");
       }
     },
     {
