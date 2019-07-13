@@ -38,18 +38,6 @@ private:
 template <typename ... T>
 member_print(const std::tuple<T...>&) -> member_print<T...>;
 
-template <typename ... Ts, typename F>
-constexpr auto or_all(const std::tuple<Ts...>& t, F&& f)
-{
-    return std::apply([f=std::forward<F>(f)](auto&& ... v){ return (f(DRY_FWD(v)) || ...);}, t);
-}
-
-template <typename ... Ts, typename F>
-constexpr auto and_all(const std::tuple<Ts...>& t, F&& f)
-{
-    return std::apply([f=std::forward<F>(f)](auto&& ... v){ return (f(DRY_FWD(v)) && ...);}, t);
-}
-
 template <typename ... Ts>
 class logical_tuple : public std::tuple<Ts...>
 {
@@ -67,6 +55,12 @@ protected:
     {
         const tuple& t = *this;
         return std::apply([&](const auto& ... v) { return (f(v) && ...);}, t);
+    }
+    template <typename RT, typename ... Args>
+    constexpr RT eval(Args&& ... args) const
+    {
+        const tuple& t = *this;
+        return std::apply([&](const auto& ... f) {return RT{f(std::forward<Args>(args)...)...};}, t);
     }
 };
 }
@@ -183,29 +177,20 @@ public:
     ))
     -> any_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>
     {
-        return call(std::index_sequence_for<T...>{}, std::forward<Ts>(ts)...);
+        using RT = any_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>;
+        return this->template eval<RT>(std::forward<Ts>(ts)...);
     }
 private:
-    template <std::size_t ... I, typename ... Ts>
-    constexpr auto call(std::index_sequence<I...>, Ts&& ... ts) const
-    noexcept(noexcept(any_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>
-        {
-            std::declval<const T&>()(std::forward<Ts>(ts)...)...
-        }
-    ))
-    -> any_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>
-    {
-        return {std::get<I>(get())(std::forward<Ts>(ts)...)...};
-    }
-
     constexpr const std::tuple<T...>& get() const { return *this;}
 };
 
 template <typename ... T>
-class none_of : std::tuple<T...>
+class none_of : internal::logical_tuple<T...>
 {
+    using internal::logical_tuple<T...>::or_all;
+    using internal::logical_tuple<T...>::and_all;
 public:
-    using std::tuple<T...>::tuple;
+    using internal::logical_tuple<T...>::logical_tuple;
     template <typename U>
     constexpr auto operator==(const U& u) const
     noexcept(noexcept(!((std::declval<const T&>() == u) || ...)))
@@ -311,32 +296,20 @@ public:
     ))
     -> none_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>
     {
-        return call(std::index_sequence_for<T...>{}, std::forward<Ts>(ts)...);
+        using RT = none_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>;
+        return this->template eval<RT>(std::forward<Ts>(ts)...);
     }
 private:
-    template <std::size_t ... I, typename ... Ts>
-    constexpr auto call(std::index_sequence<I...>, Ts&& ... ts) const
-    noexcept(noexcept(none_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>
-        {
-            std::declval<const T&>()(std::forward<Ts>(ts)...)...
-        }
-    ))
-    -> none_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>
-    {
-        return {std::get<I>(get())(std::forward<Ts>(ts)...)...};
-    }
-    template <typename F>
-    constexpr auto or_all(F&& f) const { return internal::or_all(*this, std::forward<F>(f));}
-    template <typename F>
-    constexpr auto and_all(F&& f) const { return internal::and_all(*this, std::forward<F>(f));}
     constexpr const std::tuple<T...>& get() const { return *this;}
 };
 
 template <typename ... T>
-class all_of : std::tuple<T...>
+class all_of : internal::logical_tuple<T...>
 {
+    using internal::logical_tuple<T...>::or_all;
+    using internal::logical_tuple<T...>::and_all;
 public:
-    using std::tuple<T...>::tuple;
+    using internal::logical_tuple<T...>::logical_tuple;
     template <typename U>
     constexpr auto operator==(const U& u) const
     noexcept(noexcept(((std::declval<const T&>() == u) && ...)))
@@ -441,24 +414,10 @@ public:
     ))
     -> all_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>
     {
-        return call(std::index_sequence_for<T...>{}, std::forward<Ts>(ts)...);
+        using RT = all_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>;
+        return this->template eval<RT>(std::forward<Ts>(ts)...);
     }
 private:
-    template <std::size_t ... I, typename ... Ts>
-    constexpr auto call(std::index_sequence<I...>, Ts&& ... ts) const
-    noexcept(noexcept(all_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>
-        {
-            std::declval<const T&>()(std::forward<Ts>(ts)...)...
-        }
-    ))
-    -> all_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>
-    {
-        return {std::get<I>(get())(std::forward<Ts>(ts)...)...};
-    }
-    template <typename F>
-    constexpr auto or_all(F&& f) const { return internal::or_all(*this, std::forward<F>(f));}
-    template <typename F>
-    constexpr auto and_all(F&& f) const { return internal::and_all(*this, std::forward<F>(f));}
     constexpr const std::tuple<T...>& get() const { return *this;}
 };
 
