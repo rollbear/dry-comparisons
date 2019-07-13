@@ -43,7 +43,7 @@ static_assert(x >= any_of(0,3,1,2));
 static_assert(!(x >= any_of(4,5,6)));
 
 static_assert(any_of{add<1>, add<2>, add<3>}(-2) == 0);
-static_assert(!(any_of{add<1>, add<2>, add<3>}(-2) == 3));
+static_assert(!(rollbear::any_of{add<1>, add<2>, add<3>}(-2) == 3));
 
 
 static_assert(x == all_of(3,3,3));
@@ -63,7 +63,7 @@ static_assert(!(x > all_of(3,0,1,2)));
 static_assert(x >= all_of(0,3,1,2));
 static_assert(!(x >= all_of(0,4,1,2)));
 
-static_assert(!(all_of{add<1>, add<2>, add<3>}(-3) < 0));
+static_assert(!(rollbear::all_of{add<1>, add<2>, add<3>}(-3) < 0));
 static_assert(all_of{add<1>, add<2>, add<3>}(-3) <= 3);
 
 
@@ -84,7 +84,7 @@ static_assert(!(x > none_of(3,2,4,5)));
 static_assert(x >= none_of(4,5,6));
 static_assert(!(x >= none_of(6,4,5,3)));
 
-static_assert(!(none_of{add<1>, add<2>, add<3>}(-2) == 0));
+static_assert(!(rollbear::none_of{add<1>, add<2>, add<3>}(-2) == 0));
 static_assert(none_of{add<1>, add<2>, add<3>}(-2) == 3);
 
 
