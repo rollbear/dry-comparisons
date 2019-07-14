@@ -176,12 +176,12 @@ public:
     }
     template <typename ... Ts>
     constexpr auto operator()(Ts&& ... ts) const
-    noexcept(noexcept(any_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>
-        {
-            std::declval<const T&>()(std::forward<Ts>(ts)...)...
-        }
-    ))
-    -> std::enable_if_t<std::conjunction_v<std::is_invocable<T, Ts...>...>, any_of<internal::bound<T, Ts...>...>>
+    noexcept(
+    std::conjunction_v<std::is_nothrow_move_constructible<T>...> &&
+    std::conjunction_v<std::is_nothrow_copy_constructible<Ts>...>)
+    -> std::enable_if_t<std::conjunction_v<std::is_copy_constructible<Ts>...>&&
+                        std::conjunction_v<std::is_invocable<T, Ts...>...>,
+            any_of<internal::bound<T, Ts...>...>>
     {
         using RT = any_of<internal::bound<T, Ts...>...>;
         return this->template bind<RT>(std::forward<Ts>(ts)...);
@@ -292,12 +292,12 @@ public:
 
     template <typename ... Ts>
     constexpr auto operator()(Ts&& ... ts) const
-    noexcept(noexcept(none_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>
-        {
-            std::declval<const T&>()(std::forward<Ts>(ts)...)...
-        }
-    ))
-    -> std::enable_if_t<std::conjunction_v<std::is_invocable<T, Ts...>...>, none_of<internal::bound<T, Ts...>...>>
+    noexcept(
+            std::conjunction_v<std::is_nothrow_move_constructible<T>...> &&
+            std::conjunction_v<std::is_nothrow_copy_constructible<Ts>...>)
+    -> std::enable_if_t<std::conjunction_v<std::is_copy_constructible<Ts>...>&&
+                        std::conjunction_v<std::is_invocable<T, Ts...>...>,
+            none_of<internal::bound<T, Ts...>...>>
     {
         using RT = none_of<internal::bound<T, Ts...>...>;
         return this->template bind<RT>(std::forward<Ts>(ts)...);
@@ -404,16 +404,16 @@ public:
     constexpr explicit operator bool() const
     noexcept(noexcept((std::declval<const T&>() && ...)))
     {
-        return and_all([](auto&& v) { return v;});
+        return and_all([](auto&& v) -> bool { return v;});
     }
     template <typename ... Ts>
     constexpr auto operator()(Ts&& ... ts) const
-    noexcept(noexcept(all_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>
-        {
-            std::declval<const T&>()(std::forward<Ts>(ts)...)...
-        }
-    ))
-    -> std::enable_if_t<std::conjunction_v<std::is_invocable<T, Ts...>...>, all_of<internal::bound<T, Ts...>...>>
+    noexcept(
+            std::conjunction_v<std::is_nothrow_move_constructible<T>...> &&
+            std::conjunction_v<std::is_nothrow_copy_constructible<Ts>...>)
+    -> std::enable_if_t<std::conjunction_v<std::is_copy_constructible<Ts>...>&&
+                        std::conjunction_v<std::is_invocable<T, Ts...>...>,
+            all_of<internal::bound<T, Ts...>...>>
     {
         using RT = all_of<internal::bound<T, Ts...>...>;
         return this->template bind<RT>(std::forward<Ts>(ts)...);

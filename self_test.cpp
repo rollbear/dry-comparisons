@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <sstream>
 #include <iomanip>
+#include <memory>
 
 template <template <typename ...> class, typename ...>
   struct is_detected_ : std::false_type {};
@@ -128,6 +129,12 @@ static_assert(!all_of{gt(3), aborts}(2), "all_of short cirquits calls");
 static_assert(any_of{gt(1), aborts}(2), "any_of short cirquits calls");
 //static_assert(none_of{gt(3), aborts}(2), "none_of short cirquits calls");
 static_assert(!none_of{gt(1), aborts}(2), "none_of short cirquits calls");
+
+constexpr auto not_null = [](auto&& v) { return v != nullptr;};
+
+static_assert(!is_callable_v<decltype(all_of{not_null}), std::unique_ptr<int>>, "non-copyable rvalues are disallowed");
+static_assert(!is_callable_v<decltype(any_of{not_null}), std::unique_ptr<int>>, "non-copyable rvalues are disallowed");
+static_assert(!is_callable_v<decltype(none_of{not_null}), std::unique_ptr<int>>, "non-copyable rvalues are disallowed");
 
 #define REQUIRE(...) [&](){if (__VA_ARGS__) {;} else { throw #__VA_ARGS__;}}()
 
@@ -260,6 +267,23 @@ int main()
         auto b = bool(any_of{true, v, nullstr});
         REQUIRE(b);
       }
+    },
+    {
+        "binding an lvalue reference keeps a reference",
+        []{
+            auto p = std::make_shared<int>(3);
+            auto cond = all_of{[](auto&& v) -> bool{ return v.get();}}(p);
+            REQUIRE(p.use_count() == 1U);
+            REQUIRE(cond);
+        }
+    },
+    {
+        "binding an rvalue reference copies an instance",
+        []{
+            auto cond = all_of{[](auto&& v) { return v.use_count() == 1;}}(std::make_shared<int>(3));
+            REQUIRE(cond);
+        }
+
     }
 
   };
