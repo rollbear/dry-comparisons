@@ -29,7 +29,11 @@ struct bound
     template <typename F_, typename ... As>
     constexpr bound(F_&& f_, As&& ... as) : f(std::forward<F_>(f_)), args(std::forward<As>(as)...) {}
 
-    constexpr operator RT() const { return std::apply(f, args);}
+    constexpr operator RT() const
+    noexcept(std::is_nothrow_invocable_v<const F&, const Args&...>)
+    {
+        return std::apply(f, args);
+    }
 
     F f;
     std::tuple<Args...> args;
