@@ -21,6 +21,22 @@ struct printable<std::tuple<Ts...>, std::void_t<decltype(std::declval<std::ostre
 template <typename T>
 using printable_t = typename printable<T>::type;
 
+template <typename F, typename ... Args>
+struct bound
+{
+    using RT = std::invoke_result_t<F, Args...>;
+
+    template <typename F_, typename ... As>
+    constexpr bound(F_&& f_, As&& ... as) : f(std::forward<F_>(f_)), args(std::forward<As>(as)...) {}
+
+    constexpr operator RT() const { return std::apply(f, args);}
+
+    F f;
+    std::tuple<Args...> args;
+};
+
+template <typename F, typename ... Args>
+bound(F, Args...) -> bound<F, Args...>;
 
 template <typename ... Ts>
 class logical_tuple : std::tuple<Ts...>
@@ -40,9 +56,8 @@ protected:
         return std::apply([&](const auto& ... v) { return (f(v) && ...);}, self());
     }
     template <typename RT, typename ... Args>
-    constexpr RT eval(Args&& ... args) const
-    {
-        return std::apply([&](const auto& ... f) {return RT{f(std::forward<Args>(args)...)...};}, self());
+    constexpr RT bind(Args&& ... args) const {
+        return std::apply([&](auto&&... f) { return RT{bound<Ts, Args...>(std::forward<decltype(f)>(f), args...)...}; }, self());
     }
     std::ostream& print(const char* label, std::ostream& os) const
     {
@@ -166,10 +181,10 @@ public:
             std::declval<const T&>()(std::forward<Ts>(ts)...)...
         }
     ))
-    -> any_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>
+    -> std::enable_if_t<std::conjunction_v<std::is_invocable<T, Ts...>...>, any_of<internal::bound<T, Ts...>...>>
     {
-        using RT = any_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>;
-        return this->template eval<RT>(std::forward<Ts>(ts)...);
+        using RT = any_of<internal::bound<T, Ts...>...>;
+        return this->template bind<RT>(std::forward<Ts>(ts)...);
     }
 };
 
@@ -282,10 +297,10 @@ public:
             std::declval<const T&>()(std::forward<Ts>(ts)...)...
         }
     ))
-    -> none_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>
+    -> std::enable_if_t<std::conjunction_v<std::is_invocable<T, Ts...>...>, none_of<internal::bound<T, Ts...>...>>
     {
-        using RT = none_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>;
-        return this->template eval<RT>(std::forward<Ts>(ts)...);
+        using RT = none_of<internal::bound<T, Ts...>...>;
+        return this->template bind<RT>(std::forward<Ts>(ts)...);
     }
 };
 
@@ -398,10 +413,10 @@ public:
             std::declval<const T&>()(std::forward<Ts>(ts)...)...
         }
     ))
-    -> all_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>
+    -> std::enable_if_t<std::conjunction_v<std::is_invocable<T, Ts...>...>, all_of<internal::bound<T, Ts...>...>>
     {
-        using RT = all_of<decltype(std::declval<const T&>()(std::forward<Ts>(ts)...))...>;
-        return this->template eval<RT>(std::forward<Ts>(ts)...);
+        using RT = all_of<internal::bound<T, Ts...>...>;
+        return this->template bind<RT>(std::forward<Ts>(ts)...);
     }
 };
 

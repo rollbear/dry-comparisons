@@ -120,6 +120,15 @@ static_assert(!is_callable_v<decltype(all_of{add<1>,add<2>}), int,int>);
 static_assert(!is_callable_v<decltype(all_of{add<1>,add<2>}), void*>);
 static_assert(!is_callable_v<decltype(all_of{add<1>,add<2>})>);
 
+constexpr auto gt = [](auto v) { return [=](auto u){ return u > v;};};
+constexpr auto aborts = [](auto) constexpr -> bool { abort(); return false;};
+static_assert(!all_of{gt(3), aborts}(2), "all_of short cirquits calls");
+//static_assert(all_of{gt(1), aborts}(2), "all_of short cirquits calls");
+//static_assert(!any_of{gt(3), aborts}(2), "any_of short cirquits calls");
+static_assert(any_of{gt(1), aborts}(2), "any_of short cirquits calls");
+//static_assert(none_of{gt(3), aborts}(2), "none_of short cirquits calls");
+static_assert(!none_of{gt(1), aborts}(2), "none_of short cirquits calls");
+
 #define REQUIRE(...) [&](){if (__VA_ARGS__) {;} else { throw #__VA_ARGS__;}}()
 
 
