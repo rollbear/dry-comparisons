@@ -42,7 +42,8 @@ of `any_of`, `all_of` and `none_of` may be used directly as boolean expressions.
 * `all_of{std::plus{}, std::minus{}}(3,2) > 0`
 * `none_of{std::plus{}, std::minus{}}(3,2) == 0`
 
-with SFINAE friendly checks that the calls can be made for the values given.
+with SFINAE friendly checks that the calls can be made for the values given. The
+logical conditions are short cirquited, in the normal logical expression manners.
 
 Further more, it is also possible to do relational comparisons. For example:
 
