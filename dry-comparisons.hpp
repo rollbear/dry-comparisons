@@ -5,7 +5,7 @@
 #include <type_traits>
 #include <tuple>
 #include <functional>
-#include <iostream>
+#include <iosfwd>
 
 namespace rollbear {
 
@@ -63,12 +63,13 @@ protected:
     constexpr RT bind(Args&& ... args) const {
         return std::apply([&](auto&&... f) { return RT{bound<Ts, Args...>(std::forward<decltype(f)>(f), args...)...}; }, self());
     }
-    std::ostream& print(const char* label, std::ostream& os) const
+    template <typename Char, typename Traits>
+    std::basic_ostream<Char, Traits>& print(const Char* label, std::basic_ostream<Char, Traits>& os) const
     {
         os << label << '{';
         std::apply([&os](const auto& ... v) {
             int first = 1;
-            ((os << &","[std::exchange(first,0)] << v),...);
+            ((os << &","[std::exchange(first, 0)] << v),...);
         }, self());
         return os << '}';
     }

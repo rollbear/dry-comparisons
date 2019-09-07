@@ -1,6 +1,7 @@
 #include "dry-comparisons.hpp"
 #include <cstdio>
 #include <sstream>
+#include <iostream>
 #include <iomanip>
 #include <memory>
 
