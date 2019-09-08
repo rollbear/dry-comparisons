@@ -39,8 +39,16 @@ struct bound
     std::tuple<Args...> args;
 };
 
-template <typename F, typename ... Args>
-bound(F, Args...) -> bound<F, Args...>;
+template <typename ... Ts>
+struct binder
+{
+    std::tuple<Ts...> values;
+    template <typename T, typename F>
+    constexpr bound<T, Ts...> bind(const F& f) const
+    {
+        return std::apply([&](auto&& ... vs){return bound<T, Ts...>{f, vs...};}, values);
+    }
+};
 
 template <typename ... Ts>
 class logical_tuple : std::tuple<Ts...>
@@ -61,7 +69,10 @@ protected:
     }
     template <typename RT, typename ... Args>
     constexpr RT bind(Args&& ... args) const {
-        return std::apply([&](auto&&... f) { return RT{bound<Ts, Args...>(std::forward<decltype(f)>(f), args...)...}; }, self());
+
+        return std::apply([&](auto&&... f) {
+            binder<Args...> b{{args...}};
+            return RT{b.template bind<Ts>(std::forward<decltype(f)>(f))...}; }, self());
     }
     template <typename Char, typename Traits>
     std::basic_ostream<Char, Traits>& print(const Char* label, std::basic_ostream<Char, Traits>& os) const
