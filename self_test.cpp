@@ -25,7 +25,7 @@ constexpr int x = 3;
 constexpr const char* nullstr = nullptr;
 
 template <int I>
-constexpr auto add = [](auto v) -> decltype(v+I){ return v + I;};
+static constexpr auto add = [](auto v) -> decltype(v+I){ return v + I;};
 
 static_assert(x == any_of(1,3,5));
 static_assert(!(x == any_of(1,2,5)));
