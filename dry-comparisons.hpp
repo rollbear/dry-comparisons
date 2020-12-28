@@ -105,10 +105,10 @@ public:
     }
     template <typename U, typename = std::enable_if_t<!std::is_same<U, any_of>{}>>
     friend constexpr auto operator==(const U& u, const any_of& a)
-    noexcept(noexcept(a == u))
-    -> decltype(a == u)
+    noexcept(noexcept(a.operator==(u)))
+    -> decltype(a.operator==(u))
     {
-        return a == u;
+        return a.operator==(u);
     }
     template <typename U>
     constexpr auto operator!=(const U& u) const
@@ -220,10 +220,10 @@ public:
     }
     template <typename U, typename = std::enable_if_t<!std::is_same<U, none_of>{}>>
     friend constexpr auto operator==(const U& u, const none_of& a)
-    noexcept(noexcept(a == u))
-    -> decltype(a == u)
+    noexcept(noexcept(a.operator==(u)))
+    -> decltype(a.operator==(u))
     {
-        return a == u;
+        return a.operator==(u);
     }
     template <typename U>
     constexpr auto operator!=(const U& u) const
@@ -337,10 +337,10 @@ public:
     }
     template <typename U, typename = std::enable_if_t<!std::is_same<U, all_of>{}>>
     friend constexpr auto operator==(const U& u, const all_of& a)
-    noexcept(noexcept(a == u))
-    -> decltype(a == u)
+    noexcept(noexcept(a.operator==(u)))
+    -> decltype(a.operator==(u))
     {
-        return a == u;
+        return a.operator==(u);
     }
     template <typename U>
     constexpr auto operator!=(const U& u) const
