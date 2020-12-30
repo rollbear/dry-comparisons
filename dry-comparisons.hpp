@@ -103,6 +103,7 @@ public:
     {
         return or_all([&](auto&& v) { return v == u;});
     }
+#if __cplusplus == 201703L
     template <typename U, typename = std::enable_if_t<!std::is_same<U, any_of>{}>>
     friend constexpr auto operator==(const U& u, const any_of& a)
     noexcept(noexcept(a == u))
@@ -110,6 +111,7 @@ public:
     {
         return a == u;
     }
+#endif
     template <typename U>
     constexpr auto operator!=(const U& u) const
     noexcept(noexcept(((std::declval<const T&>() != u) && ...)))
@@ -218,6 +220,7 @@ public:
     {
         return !or_all([&](auto&& v) { return v == u;});
     }
+#if __cplusplus == 201703L
     template <typename U, typename = std::enable_if_t<!std::is_same<U, none_of>{}>>
     friend constexpr auto operator==(const U& u, const none_of& a)
     noexcept(noexcept(a == u))
@@ -225,6 +228,7 @@ public:
     {
         return a == u;
     }
+#endif
     template <typename U>
     constexpr auto operator!=(const U& u) const
     noexcept(noexcept(!((std::declval<const T&>() != u) && ...)))
@@ -335,6 +339,7 @@ public:
     {
         return and_all([&](auto&& v){ return v == u;});
     }
+#if __cplusplus == 201703L
     template <typename U, typename = std::enable_if_t<!std::is_same<U, all_of>{}>>
     friend constexpr auto operator==(const U& u, const all_of& a)
     noexcept(noexcept(a == u))
@@ -342,6 +347,7 @@ public:
     {
         return a == u;
     }
+#endif
     template <typename U>
     constexpr auto operator!=(const U& u) const
     noexcept(noexcept(((std::declval<const T&>() != u) || ...)))
