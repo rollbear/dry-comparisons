@@ -168,8 +168,9 @@ static_assert(std::is_nothrow_invocable_v<std::greater<>, all_of<int,int>, int>)
 static_assert(!std::is_nothrow_invocable_v<std::greater<>, all_of<int,throwing<int>>, int>);
 static_assert(std::is_nothrow_invocable_v<std::greater_equal<>, all_of<int,int>, int>);
 static_assert(!std::is_nothrow_invocable_v<std::greater_equal<>, all_of<int,throwing<int>>, int>);
-static_assert(std::is_nothrow_invocable_v<std::logical_and<>, all_of<int,int>, bool>);
+static_assert(std::is_invocable_v<std::logical_and<>, all_of<int,int>, bool>);
 static_assert(!std::is_nothrow_invocable_v<std::logical_and<>, all_of<int,throwing<int>>, bool>);
+static_assert(std::is_invocable_v<std::logical_and<>, all_of<int,throwing<int>>, bool>);
 static_assert(noexcept(all_of_ident(3)));
 static_assert(noexcept(all_of_ident(3) > 0));
 static_assert(noexcept(all_of_ident_throw(3)));
@@ -194,8 +195,9 @@ static_assert(std::is_nothrow_invocable_v<std::greater<>, none_of<int,int>, int>
 static_assert(!std::is_nothrow_invocable_v<std::greater<>, none_of<int,throwing<int>>, int>);
 static_assert(std::is_nothrow_invocable_v<std::greater_equal<>, none_of<int,int>, int>);
 static_assert(!std::is_nothrow_invocable_v<std::greater_equal<>, none_of<int,throwing<int>>, int>);
-static_assert(std::is_nothrow_invocable_v<std::logical_and<>, none_of<int,int>, bool>);
+static_assert(std::is_invocable_v<std::logical_and<>, none_of<int,int>, bool>);
 static_assert(!std::is_nothrow_invocable_v<std::logical_and<>, none_of<int,throwing<int>>, bool>);
+static_assert(std::is_invocable_v<std::logical_and<>, none_of<int,throwing<int>>, bool>);
 static_assert(noexcept(none_of_ident(3)));
 static_assert(noexcept(none_of_ident(3) > 0));
 static_assert(noexcept(none_of_ident_throw(3)));
@@ -220,8 +222,9 @@ static_assert(std::is_nothrow_invocable_v<std::greater<>, any_of<int,int>, int>)
 static_assert(!std::is_nothrow_invocable_v<std::greater<>, any_of<int,throwing<int>>, int>);
 static_assert(std::is_nothrow_invocable_v<std::greater_equal<>, any_of<int,int>, int>);
 static_assert(!std::is_nothrow_invocable_v<std::greater_equal<>, any_of<int,throwing<int>>, int>);
-static_assert(std::is_nothrow_invocable_v<std::logical_and<>, any_of<int,int>, bool>);
+static_assert(std::is_invocable_v<std::logical_and<>, any_of<int,int>, bool>);
 static_assert(!std::is_nothrow_invocable_v<std::logical_and<>, any_of<int,throwing<int>>, bool>);
+static_assert(std::is_invocable_v<std::logical_and<>, any_of<int,throwing<int>>, bool>);
 static_assert(noexcept(any_of_ident(3)));
 static_assert(noexcept(any_of_ident(3) > 0));
 static_assert(noexcept(any_of_ident_throw(3)));
