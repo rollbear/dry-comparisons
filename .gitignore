@@ -1,5 +1,3 @@
-# no dot-files
-.*
 
 # default path of CLion build directories
 cmake-build*
