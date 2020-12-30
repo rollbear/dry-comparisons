@@ -11,6 +11,32 @@ namespace rollbear {
 
 namespace internal {
 
+struct {
+    struct A {
+        [[maybe_unused]] constexpr bool operator==(int) const { return false; }
+    };
+    template <typename T>
+    [[maybe_unused]] static constexpr auto func(T* t) -> decltype(0 == *t) {
+        return true;
+    }
+    template <typename>
+    [[maybe_unused]] static constexpr auto func(...) -> bool { return false;}
+    [[maybe_unused]] constexpr operator bool() const { return func<A>(nullptr);}
+} constexpr commutative_eq{};
+
+template <bool>
+struct eq_type
+{
+    template <typename A, typename B>
+    using type = decltype(std::declval<const A&>() == std::declval<B&>());
+};
+template <>
+struct eq_type<false> {};
+
+template <bool b, typename A, typename B>
+using eq_type_t = typename eq_type<!commutative_eq && b>::template type<A,B>;
+
+
 template <typename, typename = void>
 struct printable;
 template <typename ... Ts>
@@ -87,7 +113,6 @@ protected:
 };
 }
 
-
 template <typename ... T>
 class any_of : internal::logical_tuple<T...>
 {
@@ -103,15 +128,13 @@ public:
     {
         return or_all([&](auto&& v) { return v == u;});
     }
-#if __cplusplus == 201703L
-    template <typename U, typename = std::enable_if_t<!std::is_same<U, any_of>{}>>
+    template <typename U>
     friend constexpr auto operator==(const U& u, const any_of& a)
     noexcept(noexcept(a == u))
-    -> decltype(a == u)
+    -> internal::eq_type_t<!std::is_same_v<U, any_of>, any_of, U>
     {
         return a == u;
     }
-#endif
     template <typename U>
     constexpr auto operator!=(const U& u) const
     noexcept(noexcept(((std::declval<const T&>() != u) && ...)))
@@ -220,15 +243,13 @@ public:
     {
         return !or_all([&](auto&& v) { return v == u;});
     }
-#if __cplusplus == 201703L
-    template <typename U, typename = std::enable_if_t<!std::is_same<U, none_of>{}>>
+    template <typename U>
     friend constexpr auto operator==(const U& u, const none_of& a)
     noexcept(noexcept(a == u))
-    -> decltype(a == u)
+    -> internal::eq_type_t<!std::is_same<U, none_of>{}, none_of, U>
     {
         return a == u;
     }
-#endif
     template <typename U>
     constexpr auto operator!=(const U& u) const
     noexcept(noexcept(!((std::declval<const T&>() != u) && ...)))
@@ -339,15 +360,13 @@ public:
     {
         return and_all([&](auto&& v){ return v == u;});
     }
-#if __cplusplus == 201703L
-    template <typename U, typename = std::enable_if_t<!std::is_same<U, all_of>{}>>
+    template <typename U>
     friend constexpr auto operator==(const U& u, const all_of& a)
     noexcept(noexcept(a == u))
-    -> decltype(a == u)
+    -> internal::eq_type_t<!std::is_same<U, all_of>{}, all_of, U>
     {
         return a == u;
     }
-#endif
     template <typename U>
     constexpr auto operator!=(const U& u) const
     noexcept(noexcept(((std::declval<const T&>() != u) || ...)))
