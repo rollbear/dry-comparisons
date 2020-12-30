@@ -128,6 +128,7 @@ public:
     {
         return or_all([&](auto&& v) { return v == u;});
     }
+#if !(defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907)
     template <typename U>
     friend constexpr auto operator==(const U& u, const any_of& a)
     noexcept(noexcept(a == u))
@@ -135,6 +136,7 @@ public:
     {
         return a == u;
     }
+#endif
     template <typename U>
     constexpr auto operator!=(const U& u) const
     noexcept(noexcept(((std::declval<const T&>() != u) && ...)))
@@ -243,6 +245,7 @@ public:
     {
         return !or_all([&](auto&& v) { return v == u;});
     }
+#if !(defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907)
     template <typename U>
     friend constexpr auto operator==(const U& u, const none_of& a)
     noexcept(noexcept(a == u))
@@ -250,6 +253,7 @@ public:
     {
         return a == u;
     }
+#endif
     template <typename U>
     constexpr auto operator!=(const U& u) const
     noexcept(noexcept(!((std::declval<const T&>() != u) && ...)))
@@ -360,6 +364,7 @@ public:
     {
         return and_all([&](auto&& v){ return v == u;});
     }
+#if !(defined(__cpp_impl_three_way_comparison) && __cpp_impl_three_way_comparison >= 201907)
     template <typename U>
     friend constexpr auto operator==(const U& u, const all_of& a)
     noexcept(noexcept(a == u))
@@ -367,6 +372,7 @@ public:
     {
         return a == u;
     }
+#endif
     template <typename U>
     constexpr auto operator!=(const U& u) const
     noexcept(noexcept(((std::declval<const T&>() != u) || ...)))
