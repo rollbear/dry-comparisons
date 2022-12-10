@@ -4,25 +4,26 @@ on: [push, pull_request]
 
 jobs:
   build_linux:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
+    container: { image: "ghcr.io/rollbear/${{matrix.config.container}}" }
     strategy:
       fail-fast: false
       matrix:
         config:
-          - { cxx: clang++-10, std: 17, stdlib: "-stdlib=libc++", linker: "-fuse-ld=gold -lc++abi" }
-          - { cxx: clang++-10, std: 20, stdlib: "-stdlib=libc++", linker: "-fuse-ld=gold -lc++abi" }
-          - { cxx: clang++-10, std: 17 }
-          - { cxx: clang++-10, std: 20 }
-          - { cxx: g++-10, std: 17 }
-          - { cxx: g++-10, std: 20 }
-          - { cxx: clang++-9, std: 17 }
-          - { cxx: clang++-9, std: 20 }
-          - { cxx: g++-9, std: 17 }
-          - { cxx: g++-9, std: 20 }
-          - { cxx: clang++-8, std: 17 }
-          - { cxx: g++-8, std: 17 }
-          - { cxx: g++-8, std: 20 }
-          - { cxx: g++-7, std: 17 }
+          - { cxx: clang++-10, std: 17, stdlib: "-stdlib=libc++", linker: "-fuse-ld=gold -lc++abi", container: "clang:10" }
+          - { cxx: clang++-10, std: 20, stdlib: "-stdlib=libc++", linker: "-fuse-ld=gold -lc++abi", container: "clang:10" }
+          - { cxx: clang++-10, std: 17, container: "clang:10" }
+          - { cxx: clang++-10, std: 20, container: "clang:10" }
+          - { cxx: g++-10, std: 17, container: "gcc:10" }
+          - { cxx: g++-10, std: 20, container: "gcc:10" }
+          - { cxx: clang++-9, std: 17, container: "clang:9" }
+          - { cxx: clang++-9, std: 20, container: "clang:9" }
+          - { cxx: g++-9, std: 17, container: "gcc:9" }
+          - { cxx: g++-9, std: 20, container: "gcc:9" }
+          - { cxx: clang++-8, std: 17, container: "clang:8" }
+          - { cxx: g++-8, std: 17, container: "gcc:8" }
+          - { cxx: g++-8, std: 20, container: "gcc:8" }
+          - { cxx: g++-7, std: 17, container: "gcc:7" }
     name: "Linux ${{matrix.config.cxx}} C++${{matrix.config.std}} ${{matrix.config.stdlib}}"
     steps:
       - uses: actions/checkout@v2
