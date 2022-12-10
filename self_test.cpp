@@ -358,7 +358,7 @@ int main()
             REQUIRE(zero != none_of(0,1));
             REQUIRE(zero != none_of(1,0));
             REQUIRE(zero != none_of(0));
-            REQUIRE(!zero != none_of(1));
+            REQUIRE(!(zero != none_of(1)));
             REQUIRE(!(zero != none_of()));
             REQUIRE(!(none_of(1,2,3) != zero));
             REQUIRE(none_of(0,1,2) != zero);
