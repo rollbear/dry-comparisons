@@ -235,6 +235,11 @@ static_assert(!noexcept(any_of_ident_throw(3) > 0));
 #define REQUIRE(...) [&](){if (__VA_ARGS__) {;} else { throw #__VA_ARGS__;}}()
 
 
+int zero = 0;
+
+const auto negate = [](auto x) { return -x;};
+const auto next = [](auto x) { return ++x;};
+
 int main()
 {
   struct test {
@@ -242,6 +247,453 @@ int main()
     void (*test_func)();
   };
   test tests[] = {
+    {
+        "== any_of",
+        []{
+            REQUIRE(zero == any_of(0,1,2));
+            REQUIRE(zero == any_of(1,0,3));
+            REQUIRE(zero == any_of(1,2,0));
+            REQUIRE(!(zero == any_of(1,2,3)));
+            REQUIRE(!(zero == any_of()));
+            REQUIRE(any_of(0,2,3) == zero);
+            REQUIRE(any_of(1,0,3) == zero);
+            REQUIRE(any_of(1,2,0) == zero);
+            REQUIRE(!(any_of(1,2,3) == zero));
+            REQUIRE(!(any_of() == zero));
+        }
+    },
+    {
+        "== all_of",
+        []{
+            REQUIRE(!(zero == all_of(1,2,3)));
+            REQUIRE(!(zero == all_of(0,1,2)));
+            REQUIRE(!(zero == all_of(0,1,0)));
+            REQUIRE(zero == all_of(0,0,0));
+            REQUIRE(zero == all_of(0,0));
+            REQUIRE(zero == all_of(0));
+            REQUIRE(zero == all_of());
+            REQUIRE(!(all_of(1,2,3) == zero));
+            REQUIRE(!(all_of(0,1,2) == zero));
+            REQUIRE(!(all_of(0,1,0) == zero));
+            REQUIRE(all_of(0,0,0) == zero);
+            REQUIRE(all_of(0,0) == zero);
+            REQUIRE(all_of(0) == zero);
+            REQUIRE(all_of() == zero);
+        }
+    },
+    {
+      "== none_of",
+      []{
+          REQUIRE(zero == none_of(1,2,3));
+          REQUIRE(zero == none_of(1,2));
+          REQUIRE(zero == none_of(1));
+          REQUIRE(zero == none_of());
+          REQUIRE(!(zero == none_of(0,1,2)));
+          REQUIRE(!(zero == none_of(1,2,0)));
+          REQUIRE(!(zero == none_of(1,0,2)));
+          REQUIRE(!(zero == none_of(0,1)));
+          REQUIRE(!(zero == none_of(1,0)));
+          REQUIRE(!(zero == none_of(0)));
+          REQUIRE(zero == none_of(1));
+      }
+    },
+    {
+      "!= any_of",
+      []{
+          REQUIRE(zero != any_of(1,2,3));
+          REQUIRE(!(zero != any_of(0,1,2)));
+          REQUIRE(!(zero != any_of(1,2,0)));
+          REQUIRE(!(zero != any_of(1,0,2)));
+          REQUIRE(!(zero != any_of(0,1)));
+          REQUIRE(!(zero != any_of(1,0)));
+          REQUIRE(!(zero != any_of(0)));
+          REQUIRE(zero != any_of(1));
+          REQUIRE(any_of(1,2,3) != zero);
+          REQUIRE(!(any_of(0,1,2) != zero));
+          REQUIRE(!(any_of(1,2,0) != zero));
+          REQUIRE(!(any_of(1,0,2) != zero));
+          REQUIRE(!(any_of(0,1) != zero));
+          REQUIRE(!(any_of(1,0) != zero));
+          REQUIRE(!(any_of(0) != zero));
+          REQUIRE(any_of(1) != zero);
+      }
+    },
+    {
+        "!= all_of",
+        [] {
+            REQUIRE(zero != all_of(1, 2, 3));
+            REQUIRE(zero != all_of(0,1,2));
+            REQUIRE(zero != all_of(1,0,2));
+            REQUIRE(zero != all_of(1,2,0));
+            REQUIRE(zero != all_of(1,2));
+            REQUIRE(zero != all_of(0,1));
+            REQUIRE(zero != all_of(1,0));
+            REQUIRE(zero != all_of(1));
+            REQUIRE(!(zero != all_of(0)));
+            REQUIRE(!(zero != all_of()));
+            REQUIRE(!(zero != all_of(0,0)));
+            REQUIRE(!(zero != all_of(0,0,0)));
+            REQUIRE(all_of(1, 2, 3) != zero);
+            REQUIRE(all_of(0,1,2) != zero);
+            REQUIRE(all_of(1,0,2) != zero);
+            REQUIRE(all_of(1,2,0) != zero);
+            REQUIRE(all_of(1,2) != zero);
+            REQUIRE(all_of(0,1) != zero);
+            REQUIRE(all_of(1,0) != zero);
+            REQUIRE(all_of(1) != zero);
+            REQUIRE(!(all_of(0) != zero));
+            REQUIRE(!(all_of() != zero));
+            REQUIRE(!(all_of(0,0) != zero));
+            REQUIRE(!(all_of(0,0,0) != zero));
+        }
+    },
+    {
+        "!= none_of",
+        []{
+            REQUIRE(!(zero != none_of(1,2,3)));
+            REQUIRE(zero != none_of(0,1,2));
+            REQUIRE(zero != none_of(1,0,2));
+            REQUIRE(zero != none_of(1,2,0));
+            REQUIRE(!(zero != none_of(1,2)));
+            REQUIRE(zero != none_of(0,1));
+            REQUIRE(zero != none_of(1,0));
+            REQUIRE(zero != none_of(0));
+            REQUIRE(!zero != none_of(1));
+            REQUIRE(!(zero != none_of()));
+            REQUIRE(!(none_of(1,2,3) != zero));
+            REQUIRE(none_of(0,1,2) != zero);
+            REQUIRE(none_of(1,0,2) != zero);
+            REQUIRE(none_of(1,2,0) != zero);
+            REQUIRE(!(none_of(1,2) != zero));
+            REQUIRE(none_of(0,1) != zero);
+            REQUIRE(none_of(1,0) != zero);
+            REQUIRE(none_of(0) != zero);
+            REQUIRE(!(none_of(1) != zero));
+            REQUIRE(!(none_of() != zero));
+        }
+    },
+    {
+        "< any_of",
+        []{
+            REQUIRE(zero < any_of(0,0,1));
+            REQUIRE(zero < any_of(0,1,0));
+            REQUIRE(zero < any_of(1,0,0));
+            REQUIRE(!(zero < any_of(0,0,0)));
+            REQUIRE(zero < any_of(0,1));
+            REQUIRE(zero < any_of(1,0));
+            REQUIRE(!(zero < any_of(0,0)));
+            REQUIRE(zero < any_of(1));
+            REQUIRE(!(zero < any_of(0)));
+            REQUIRE(!(zero < any_of()));
+            REQUIRE(any_of(0,0,1) > zero);
+            REQUIRE(any_of(0,1,0) > zero);
+            REQUIRE(any_of(1,0,0) > zero);
+            REQUIRE(!(any_of(0,0,0) > zero));
+            REQUIRE(any_of(0,1) > zero);
+            REQUIRE(any_of(1,0) > zero);
+            REQUIRE(!(any_of(0,0) > zero));
+            REQUIRE(any_of(1) > zero);
+            REQUIRE(!(any_of(0) > zero));
+            REQUIRE(!(any_of() > zero));
+        }
+    },
+    {
+        "< all_of",
+        []{
+            REQUIRE(zero < all_of(1,2,3));
+            REQUIRE(!(zero < all_of(0,1,2)));
+            REQUIRE(!(zero < all_of(1,0,2)));
+            REQUIRE(!(zero < all_of(1,2,0)));
+            REQUIRE(zero < all_of(1,2));
+            REQUIRE(!(zero < all_of(0,1)));
+            REQUIRE(!(zero < all_of(1,0)));
+            REQUIRE(zero < all_of(1));
+            REQUIRE(!(zero < all_of(0)));
+            REQUIRE(zero < all_of());
+            REQUIRE(all_of(1,2,3) > zero);
+            REQUIRE(!(all_of(0,1,2) > zero));
+            REQUIRE(!(all_of(1,0,2) > zero));
+            REQUIRE(!(all_of(1,2,0) > zero));
+            REQUIRE(all_of(1,2) > zero);
+            REQUIRE(!(all_of(0,1) > zero));
+            REQUIRE(!(all_of(1,0) > zero));
+            REQUIRE(all_of(1) > zero);
+            REQUIRE(!(all_of(0) > zero));
+            REQUIRE(all_of() > zero);
+        }
+    },
+    {
+      "< none_of",
+      []{
+          REQUIRE(zero < none_of(0,0,0));
+          REQUIRE(!(zero < none_of(1,0,0)));
+          REQUIRE(!(zero < none_of(0,1,0)));
+          REQUIRE(!(zero < none_of(0,0,1)));
+          REQUIRE(zero < none_of(0,0));
+          REQUIRE(!(zero < none_of(1,0)));
+          REQUIRE(!(zero < none_of(0,1)));
+          REQUIRE(zero < none_of(0));
+          REQUIRE(!(zero < none_of(1)));
+          REQUIRE(zero < none_of());
+          REQUIRE(none_of(0,0,0) > zero);
+          REQUIRE(!(none_of(1,0,0) > zero));
+          REQUIRE(!(none_of(0,1,0) > zero));
+          REQUIRE(!(none_of(0,0,1) > zero));
+          REQUIRE(none_of(0,0) > zero);
+          REQUIRE(!(none_of(1,0) > zero));
+          REQUIRE(!(none_of(0,1) > zero));
+          REQUIRE(none_of(0) > zero);
+          REQUIRE(!(none_of(1) > zero));
+          REQUIRE(none_of() > zero);
+      }
+    },
+    {
+        "<= any_of",
+        []{
+            REQUIRE(!(zero <= any_of(-1,-1,-1)));
+            REQUIRE(zero <= any_of(0,-1,-1));
+            REQUIRE(zero <= any_of(-1,0,-1));
+            REQUIRE(zero <= any_of(-1,-1,0));
+            REQUIRE(zero <= any_of(0,-1));
+            REQUIRE(zero <= any_of(-1,0));
+            REQUIRE(!(zero <= any_of(-1,-1)));
+            REQUIRE(zero <= any_of(0));
+            REQUIRE(!(zero <= any_of(-1)));
+            REQUIRE(!(zero <= any_of()));
+            REQUIRE(!(any_of(-1,-1,-1) >= zero));
+            REQUIRE(any_of(0,-1,-1) >= zero);
+            REQUIRE(any_of(-1,0,-1) >= zero);
+            REQUIRE(any_of(-1,-1,0) >= zero);
+            REQUIRE(any_of(0,-1) >= zero);
+            REQUIRE(any_of(-1,0) >= zero);
+            REQUIRE(!(any_of(-1,-1) >= zero));
+            REQUIRE(any_of(0) >= zero);
+            REQUIRE(!(any_of(-1) >= zero));
+            REQUIRE(!(any_of() >= zero));
+        }
+    },
+    {
+        "<= all_of",
+        []{
+            REQUIRE(zero <= all_of(0,0,0));
+            REQUIRE(!(zero <= all_of(0,-1,-1)));
+            REQUIRE(!(zero <= all_of(-1,0,-1)));
+            REQUIRE(!(zero <= all_of(-1,-1,0)));
+            REQUIRE(zero <= all_of(0,0));
+            REQUIRE(!(zero <= all_of(0,-1)));
+            REQUIRE(!(zero <= all_of(-1,0)));
+            REQUIRE(zero <= all_of(0));
+            REQUIRE(!(zero <= all_of(-1)));
+            REQUIRE(zero <= all_of());
+            REQUIRE(all_of(0,0,0) >= zero);
+            REQUIRE(!(all_of(0,-1,-1) >= zero));
+            REQUIRE(!(all_of(-1,0,-1) >= zero));
+            REQUIRE(!(all_of(-1,-1,0) >= zero));
+            REQUIRE(all_of(0,0) >= zero);
+            REQUIRE(!(all_of(0,-1) >= zero));
+            REQUIRE(!(all_of(-1,0) >= zero));
+            REQUIRE(all_of(0) >= zero);
+            REQUIRE(!(all_of(-1) >= zero));
+            REQUIRE(all_of() >= zero);
+        }
+    },
+    {
+        "<= none_of",
+        []{
+            REQUIRE(zero <= none_of(-1,-1,-1));
+            REQUIRE(!(zero <= none_of(0,-1,-1)));
+            REQUIRE(!(zero <= none_of(-1,0,-1)));
+            REQUIRE(!(zero <= none_of(-1,-1,0)));
+            REQUIRE(zero <= none_of(-1,-1));
+            REQUIRE(!(zero <= none_of(-1,0)));
+            REQUIRE(!(zero <= none_of(0,-1)));
+            REQUIRE(zero <= none_of(-1));
+            REQUIRE(!(zero <= none_of(0)));
+            REQUIRE(zero <= none_of());
+            REQUIRE(none_of(-1,-1,-1) >= zero);
+            REQUIRE(!(none_of(0,-1,-1) >= zero));
+            REQUIRE(!(none_of(-1,0,-1) >= zero));
+            REQUIRE(!(none_of(-1,-1,0) >= zero));
+            REQUIRE(none_of(-1,-1) >= zero);
+            REQUIRE(!(none_of(-1,0) >= zero));
+            REQUIRE(!(none_of(0,-1) >= zero));
+            REQUIRE(none_of(-1) >= zero);
+            REQUIRE(!(none_of(0) >= zero));
+            REQUIRE(none_of() >= zero);
+        }
+    },
+    ///
+    {
+        "> any_of",
+        []{
+            REQUIRE(zero > any_of(0,0,-1));
+            REQUIRE(zero > any_of(0,-1,0));
+            REQUIRE(zero > any_of(-1,0,0));
+            REQUIRE(!(zero > any_of(0,0,0)));
+            REQUIRE(zero > any_of(0,-1));
+            REQUIRE(zero > any_of(-1,0));
+            REQUIRE(!(zero > any_of(0,0)));
+            REQUIRE(zero > any_of(-1));
+            REQUIRE(!(zero > any_of(0)));
+            REQUIRE(!(zero > any_of()));
+            REQUIRE(any_of(0,0,-1) < zero);
+            REQUIRE(any_of(0,-1,0) < zero);
+            REQUIRE(any_of(-1,0,0) < zero);
+            REQUIRE(!(any_of(0,0,0) < zero));
+            REQUIRE(any_of(0,-1) < zero);
+            REQUIRE(any_of(-1,0) < zero);
+            REQUIRE(!(any_of(0,0) < zero));
+            REQUIRE(any_of(-1) < zero);
+            REQUIRE(!(any_of(0) < zero));
+            REQUIRE(!(any_of() < zero));
+        }
+    },
+    {
+        "> all_of",
+        []{
+            REQUIRE(zero > all_of(-1,-2,-3));
+            REQUIRE(!(zero > all_of(0,-1,-2)));
+            REQUIRE(!(zero > all_of(-1,0,-2)));
+            REQUIRE(!(zero > all_of(-1,-2,0)));
+            REQUIRE(zero > all_of(-1,-2));
+            REQUIRE(!(zero > all_of(0,-1)));
+            REQUIRE(!(zero > all_of(-1,0)));
+            REQUIRE(zero > all_of(-1));
+            REQUIRE(!(zero > all_of(0)));
+            REQUIRE(zero > all_of());
+            REQUIRE(all_of(-1,-2,-3) < zero);
+            REQUIRE(!(all_of(0,-1,-2) < zero));
+            REQUIRE(!(all_of(-1,0,-2) < zero));
+            REQUIRE(!(all_of(-1,-2,0) < zero));
+            REQUIRE(all_of(-1,-2) < zero);
+            REQUIRE(!(all_of(0,-1) < zero));
+            REQUIRE(!(all_of(-1,0) < zero));
+            REQUIRE(all_of(-1) < zero);
+            REQUIRE(!(all_of(0) < zero));
+            REQUIRE(all_of() < zero);
+        }
+    },
+    {
+        "> none_of",
+        []{
+            REQUIRE(zero > none_of(0,0,0));
+            REQUIRE(!(zero > none_of(-1,0,0)));
+            REQUIRE(!(zero > none_of(0,-1,0)));
+            REQUIRE(!(zero > none_of(0,0,-1)));
+            REQUIRE(zero > none_of(0,0));
+            REQUIRE(!(zero > none_of(-1,0)));
+            REQUIRE(!(zero > none_of(0,-1)));
+            REQUIRE(zero > none_of(0));
+            REQUIRE(!(zero > none_of(-1)));
+            REQUIRE(zero > none_of());
+            REQUIRE(none_of(0,0,0) < zero);
+            REQUIRE(!(none_of(-1,0,0) < zero));
+            REQUIRE(!(none_of(0,-1,0) < zero));
+            REQUIRE(!(none_of(0,0,-1) < zero));
+            REQUIRE(none_of(0,0) < zero);
+            REQUIRE(!(none_of(-1,0) < zero));
+            REQUIRE(!(none_of(0,-1) < zero));
+            REQUIRE(none_of(0) < zero);
+            REQUIRE(!(none_of(-1) < zero));
+            REQUIRE(none_of() < zero);
+        }
+    },
+    {
+        ">= any_of",
+        []{
+            REQUIRE(!(zero >= any_of(1,1,1)));
+            REQUIRE(zero >= any_of(0,1,1));
+            REQUIRE(zero >= any_of(1,0,1));
+            REQUIRE(zero >= any_of(1,1,0));
+            REQUIRE(zero >= any_of(0,1));
+            REQUIRE(zero >= any_of(1,0));
+            REQUIRE(!(zero >= any_of(1,1)));
+            REQUIRE(zero >= any_of(0));
+            REQUIRE(!(zero >= any_of(1)));
+            REQUIRE(!(zero >= any_of()));
+            REQUIRE(!(any_of(1,1,1) <= zero));
+            REQUIRE(any_of(0,1,1) <= zero);
+            REQUIRE(any_of(1,0,1) <= zero);
+            REQUIRE(any_of(1,1,0) <= zero);
+            REQUIRE(any_of(0,1) <= zero);
+            REQUIRE(any_of(1,0) <= zero);
+            REQUIRE(!(any_of(1,1) <= zero));
+            REQUIRE(any_of(0) <= zero);
+            REQUIRE(!(any_of(1) <= zero));
+            REQUIRE(!(any_of() <= zero));
+        }
+    },
+    {
+        ">= all_of",
+        []{
+            REQUIRE(zero >= all_of(0,0,0));
+            REQUIRE(!(zero >= all_of(0,1,1)));
+            REQUIRE(!(zero >= all_of(1,0,1)));
+            REQUIRE(!(zero >= all_of(1,1,0)));
+            REQUIRE(zero >= all_of(0,0));
+            REQUIRE(!(zero >= all_of(0,1)));
+            REQUIRE(!(zero >= all_of(1,0)));
+            REQUIRE(zero >= all_of(0));
+            REQUIRE(!(zero >= all_of(1)));
+            REQUIRE(zero >= all_of());
+            REQUIRE(all_of(0,0,0) <= zero);
+            REQUIRE(!(all_of(0,1,1) <= zero));
+            REQUIRE(!(all_of(1,0,1) <= zero));
+            REQUIRE(!(all_of(1,1,0) <= zero));
+            REQUIRE(all_of(0,0) <= zero);
+            REQUIRE(!(all_of(0,1) <= zero));
+            REQUIRE(!(all_of(1,0) <= zero));
+            REQUIRE(all_of(0) <= zero);
+            REQUIRE(!(all_of(1) <= zero));
+            REQUIRE(all_of() <= zero);
+        }
+    },
+    {
+        ">= none_of",
+        []{
+            REQUIRE(zero >= none_of(1,1,1));
+            REQUIRE(!(zero >= none_of(0,1,1)));
+            REQUIRE(!(zero >= none_of(1,0,1)));
+            REQUIRE(!(zero >= none_of(1,1,0)));
+            REQUIRE(zero >= none_of(1,1));
+            REQUIRE(!(zero >= none_of(1,0)));
+            REQUIRE(!(zero >= none_of(0,1)));
+            REQUIRE(zero >= none_of(1));
+            REQUIRE(!(zero >= none_of(0)));
+            REQUIRE(zero >= none_of());
+            REQUIRE(none_of(1,1,1) <= zero);
+            REQUIRE(!(none_of(0,1,1) <= zero));
+            REQUIRE(!(none_of(1,0,1) <= zero));
+            REQUIRE(!(none_of(1,1,0) <= zero));
+            REQUIRE(none_of(1,1) <= zero);
+            REQUIRE(!(none_of(1,0) <= zero));
+            REQUIRE(!(none_of(0,1) <= zero));
+            REQUIRE(none_of(1) <= zero);
+            REQUIRE(!(none_of(0) <= zero));
+            REQUIRE(none_of() <= zero);
+        }
+    },
+    {
+        "any_of(...)",
+        []{
+            REQUIRE(any_of(negate, next)(1) < 0);
+            REQUIRE(!(any_of(negate, next)(zero) < 0));
+        }
+    },
+    {
+        "all_of(...)",
+        []{
+            REQUIRE(all_of(negate, next)(zero) >= 0);
+            REQUIRE(all_of(negate, next)(-1) >= 0);
+        }
+    },
+    {
+        "none_of(...)",
+        []{
+            REQUIRE(none_of(negate, next)(zero) < 0);
+            REQUIRE(none_of(negate, next)(-1) < 0);
+        }
+    },
     {
       "print any_of",
       []{
