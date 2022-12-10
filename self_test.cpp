@@ -254,12 +254,10 @@ int main()
             REQUIRE(zero == any_of(1,0,3));
             REQUIRE(zero == any_of(1,2,0));
             REQUIRE(!(zero == any_of(1,2,3)));
-            REQUIRE(!(zero == any_of()));
             REQUIRE(any_of(0,2,3) == zero);
             REQUIRE(any_of(1,0,3) == zero);
             REQUIRE(any_of(1,2,0) == zero);
             REQUIRE(!(any_of(1,2,3) == zero));
-            REQUIRE(!(any_of() == zero));
         }
     },
     {
@@ -271,14 +269,12 @@ int main()
             REQUIRE(zero == all_of(0,0,0));
             REQUIRE(zero == all_of(0,0));
             REQUIRE(zero == all_of(0));
-            REQUIRE(zero == all_of());
             REQUIRE(!(all_of(1,2,3) == zero));
             REQUIRE(!(all_of(0,1,2) == zero));
             REQUIRE(!(all_of(0,1,0) == zero));
             REQUIRE(all_of(0,0,0) == zero);
             REQUIRE(all_of(0,0) == zero);
             REQUIRE(all_of(0) == zero);
-            REQUIRE(all_of() == zero);
         }
     },
     {
@@ -287,7 +283,6 @@ int main()
           REQUIRE(zero == none_of(1,2,3));
           REQUIRE(zero == none_of(1,2));
           REQUIRE(zero == none_of(1));
-          REQUIRE(zero == none_of());
           REQUIRE(!(zero == none_of(0,1,2)));
           REQUIRE(!(zero == none_of(1,2,0)));
           REQUIRE(!(zero == none_of(1,0,2)));
@@ -330,7 +325,6 @@ int main()
             REQUIRE(zero != all_of(1,0));
             REQUIRE(zero != all_of(1));
             REQUIRE(!(zero != all_of(0)));
-            REQUIRE(!(zero != all_of()));
             REQUIRE(!(zero != all_of(0,0)));
             REQUIRE(!(zero != all_of(0,0,0)));
             REQUIRE(all_of(1, 2, 3) != zero);
@@ -342,7 +336,6 @@ int main()
             REQUIRE(all_of(1,0) != zero);
             REQUIRE(all_of(1) != zero);
             REQUIRE(!(all_of(0) != zero));
-            REQUIRE(!(all_of() != zero));
             REQUIRE(!(all_of(0,0) != zero));
             REQUIRE(!(all_of(0,0,0) != zero));
         }
@@ -359,7 +352,6 @@ int main()
             REQUIRE(zero != none_of(1,0));
             REQUIRE(zero != none_of(0));
             REQUIRE(!(zero != none_of(1)));
-            REQUIRE(!(zero != none_of()));
             REQUIRE(!(none_of(1,2,3) != zero));
             REQUIRE(none_of(0,1,2) != zero);
             REQUIRE(none_of(1,0,2) != zero);
@@ -369,7 +361,6 @@ int main()
             REQUIRE(none_of(1,0) != zero);
             REQUIRE(none_of(0) != zero);
             REQUIRE(!(none_of(1) != zero));
-            REQUIRE(!(none_of() != zero));
         }
     },
     {
@@ -384,7 +375,6 @@ int main()
             REQUIRE(!(zero < any_of(0,0)));
             REQUIRE(zero < any_of(1));
             REQUIRE(!(zero < any_of(0)));
-            REQUIRE(!(zero < any_of()));
             REQUIRE(any_of(0,0,1) > zero);
             REQUIRE(any_of(0,1,0) > zero);
             REQUIRE(any_of(1,0,0) > zero);
@@ -394,7 +384,6 @@ int main()
             REQUIRE(!(any_of(0,0) > zero));
             REQUIRE(any_of(1) > zero);
             REQUIRE(!(any_of(0) > zero));
-            REQUIRE(!(any_of() > zero));
         }
     },
     {
@@ -409,7 +398,6 @@ int main()
             REQUIRE(!(zero < all_of(1,0)));
             REQUIRE(zero < all_of(1));
             REQUIRE(!(zero < all_of(0)));
-            REQUIRE(zero < all_of());
             REQUIRE(all_of(1,2,3) > zero);
             REQUIRE(!(all_of(0,1,2) > zero));
             REQUIRE(!(all_of(1,0,2) > zero));
@@ -419,7 +407,6 @@ int main()
             REQUIRE(!(all_of(1,0) > zero));
             REQUIRE(all_of(1) > zero);
             REQUIRE(!(all_of(0) > zero));
-            REQUIRE(all_of() > zero);
         }
     },
     {
@@ -434,7 +421,6 @@ int main()
           REQUIRE(!(zero < none_of(0,1)));
           REQUIRE(zero < none_of(0));
           REQUIRE(!(zero < none_of(1)));
-          REQUIRE(zero < none_of());
           REQUIRE(none_of(0,0,0) > zero);
           REQUIRE(!(none_of(1,0,0) > zero));
           REQUIRE(!(none_of(0,1,0) > zero));
@@ -444,7 +430,6 @@ int main()
           REQUIRE(!(none_of(0,1) > zero));
           REQUIRE(none_of(0) > zero);
           REQUIRE(!(none_of(1) > zero));
-          REQUIRE(none_of() > zero);
       }
     },
     {
@@ -459,7 +444,6 @@ int main()
             REQUIRE(!(zero <= any_of(-1,-1)));
             REQUIRE(zero <= any_of(0));
             REQUIRE(!(zero <= any_of(-1)));
-            REQUIRE(!(zero <= any_of()));
             REQUIRE(!(any_of(-1,-1,-1) >= zero));
             REQUIRE(any_of(0,-1,-1) >= zero);
             REQUIRE(any_of(-1,0,-1) >= zero);
@@ -469,7 +453,6 @@ int main()
             REQUIRE(!(any_of(-1,-1) >= zero));
             REQUIRE(any_of(0) >= zero);
             REQUIRE(!(any_of(-1) >= zero));
-            REQUIRE(!(any_of() >= zero));
         }
     },
     {
@@ -484,7 +467,6 @@ int main()
             REQUIRE(!(zero <= all_of(-1,0)));
             REQUIRE(zero <= all_of(0));
             REQUIRE(!(zero <= all_of(-1)));
-            REQUIRE(zero <= all_of());
             REQUIRE(all_of(0,0,0) >= zero);
             REQUIRE(!(all_of(0,-1,-1) >= zero));
             REQUIRE(!(all_of(-1,0,-1) >= zero));
@@ -494,7 +476,6 @@ int main()
             REQUIRE(!(all_of(-1,0) >= zero));
             REQUIRE(all_of(0) >= zero);
             REQUIRE(!(all_of(-1) >= zero));
-            REQUIRE(all_of() >= zero);
         }
     },
     {
@@ -509,7 +490,6 @@ int main()
             REQUIRE(!(zero <= none_of(0,-1)));
             REQUIRE(zero <= none_of(-1));
             REQUIRE(!(zero <= none_of(0)));
-            REQUIRE(zero <= none_of());
             REQUIRE(none_of(-1,-1,-1) >= zero);
             REQUIRE(!(none_of(0,-1,-1) >= zero));
             REQUIRE(!(none_of(-1,0,-1) >= zero));
@@ -519,7 +499,6 @@ int main()
             REQUIRE(!(none_of(0,-1) >= zero));
             REQUIRE(none_of(-1) >= zero);
             REQUIRE(!(none_of(0) >= zero));
-            REQUIRE(none_of() >= zero);
         }
     },
     ///
@@ -535,7 +514,6 @@ int main()
             REQUIRE(!(zero > any_of(0,0)));
             REQUIRE(zero > any_of(-1));
             REQUIRE(!(zero > any_of(0)));
-            REQUIRE(!(zero > any_of()));
             REQUIRE(any_of(0,0,-1) < zero);
             REQUIRE(any_of(0,-1,0) < zero);
             REQUIRE(any_of(-1,0,0) < zero);
@@ -545,7 +523,6 @@ int main()
             REQUIRE(!(any_of(0,0) < zero));
             REQUIRE(any_of(-1) < zero);
             REQUIRE(!(any_of(0) < zero));
-            REQUIRE(!(any_of() < zero));
         }
     },
     {
@@ -560,7 +537,6 @@ int main()
             REQUIRE(!(zero > all_of(-1,0)));
             REQUIRE(zero > all_of(-1));
             REQUIRE(!(zero > all_of(0)));
-            REQUIRE(zero > all_of());
             REQUIRE(all_of(-1,-2,-3) < zero);
             REQUIRE(!(all_of(0,-1,-2) < zero));
             REQUIRE(!(all_of(-1,0,-2) < zero));
@@ -570,7 +546,6 @@ int main()
             REQUIRE(!(all_of(-1,0) < zero));
             REQUIRE(all_of(-1) < zero);
             REQUIRE(!(all_of(0) < zero));
-            REQUIRE(all_of() < zero);
         }
     },
     {
@@ -585,7 +560,6 @@ int main()
             REQUIRE(!(zero > none_of(0,-1)));
             REQUIRE(zero > none_of(0));
             REQUIRE(!(zero > none_of(-1)));
-            REQUIRE(zero > none_of());
             REQUIRE(none_of(0,0,0) < zero);
             REQUIRE(!(none_of(-1,0,0) < zero));
             REQUIRE(!(none_of(0,-1,0) < zero));
@@ -595,7 +569,6 @@ int main()
             REQUIRE(!(none_of(0,-1) < zero));
             REQUIRE(none_of(0) < zero);
             REQUIRE(!(none_of(-1) < zero));
-            REQUIRE(none_of() < zero);
         }
     },
     {
@@ -610,7 +583,6 @@ int main()
             REQUIRE(!(zero >= any_of(1,1)));
             REQUIRE(zero >= any_of(0));
             REQUIRE(!(zero >= any_of(1)));
-            REQUIRE(!(zero >= any_of()));
             REQUIRE(!(any_of(1,1,1) <= zero));
             REQUIRE(any_of(0,1,1) <= zero);
             REQUIRE(any_of(1,0,1) <= zero);
@@ -620,7 +592,6 @@ int main()
             REQUIRE(!(any_of(1,1) <= zero));
             REQUIRE(any_of(0) <= zero);
             REQUIRE(!(any_of(1) <= zero));
-            REQUIRE(!(any_of() <= zero));
         }
     },
     {
@@ -635,7 +606,6 @@ int main()
             REQUIRE(!(zero >= all_of(1,0)));
             REQUIRE(zero >= all_of(0));
             REQUIRE(!(zero >= all_of(1)));
-            REQUIRE(zero >= all_of());
             REQUIRE(all_of(0,0,0) <= zero);
             REQUIRE(!(all_of(0,1,1) <= zero));
             REQUIRE(!(all_of(1,0,1) <= zero));
@@ -645,7 +615,6 @@ int main()
             REQUIRE(!(all_of(1,0) <= zero));
             REQUIRE(all_of(0) <= zero);
             REQUIRE(!(all_of(1) <= zero));
-            REQUIRE(all_of() <= zero);
         }
     },
     {
@@ -660,7 +629,6 @@ int main()
             REQUIRE(!(zero >= none_of(0,1)));
             REQUIRE(zero >= none_of(1));
             REQUIRE(!(zero >= none_of(0)));
-            REQUIRE(zero >= none_of());
             REQUIRE(none_of(1,1,1) <= zero);
             REQUIRE(!(none_of(0,1,1) <= zero));
             REQUIRE(!(none_of(1,0,1) <= zero));
@@ -670,7 +638,6 @@ int main()
             REQUIRE(!(none_of(0,1) <= zero));
             REQUIRE(none_of(1) <= zero);
             REQUIRE(!(none_of(0) <= zero));
-            REQUIRE(none_of() <= zero);
         }
     },
     {
