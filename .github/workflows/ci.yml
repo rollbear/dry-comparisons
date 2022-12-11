@@ -35,7 +35,9 @@ jobs:
             -B build \
             -DCMAKE_CXX_COMPILER=${{matrix.config.cxx}} \
             -DCMAKE_CXX_STANDARD=${{matrix.config.std}} \
-            -DCMAKE_CXX_FLAGS="${{matrix.config.stdlib}} -Wall -Wextra -pedantic -Werror" \
+            -DCMAKE_CXX_STANDARD_REQUIRED=ON \
+            -DCMAKE_CXX_EXTENSIONS=OFF \
+            -DCMAKE_CXX_FLAGS="${{matrix.config.stdlib}} -Wall -Wextra -pedantic -Werror -Wconversion" \
             -DCMAKE_BUILD_TYPE=Debug
       - name: "build"
         run: |
