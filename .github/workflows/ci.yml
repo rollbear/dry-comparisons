@@ -37,21 +37,23 @@ jobs:
             -DCMAKE_CXX_STANDARD=${{matrix.config.std}} \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_CXX_EXTENSIONS=OFF \
-            -DCMAKE_CXX_FLAGS="${{matrix.config.stdlib}} -Wall -Wextra -pedantic -Werror -Wconversion" \
+            -DCMAKE_CXX_FLAGS="${{matrix.config.stdlib}} -Wall -Wextra -pedantic -Werror -Wconversion --coverage" \
             -DCMAKE_BUILD_TYPE=Debug
       - name: "build"
         run: |
           cmake --build build --target self_test
       - name: "test"
         run: |
-          kcov --skip-solibs  ./coverage --include-pattern=dry-comparisons.hpp ./build/self_test
+          ./build/self_test
+
+      - name: "collect coverage"
+        run: |
+          find . -name "self_test.dir" -exec gcov -o {} self_test.cpp.gcno \;
 
       - name: "upload coverage"
         uses: codecov/codecov-action@v3
         with:
-          directory: coverage
-          files: "*test*/cobertura.xml"
-          name: "Linux ${{matrix.config.cxx}} C++${{matrix.config.std}} ${{matrix.config.stdlib}}"
+          files: "dry-comparisons.hpp.gcov"
           fail_ci_if_error: false
           verbose: true
 
