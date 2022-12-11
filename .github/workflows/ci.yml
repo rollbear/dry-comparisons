@@ -44,7 +44,7 @@ jobs:
           cmake --build build --target self_test
       - name: "test"
         run: |
-          kcov --skip-solibs  ./coverage --include-pattern=dry-comparisons ./build/self_test
+          kcov --skip-solibs  ./coverage --include-pattern=dry-comparisons.hpp ./build/self_test
 
       - name: "upload coverage"
         uses: codecov/codecov-action@v3
