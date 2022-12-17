@@ -48,7 +48,8 @@ jobs:
 
       - name: "collect coverage"
         run: |
-          find . -name "self_test.dir" -exec gcov -o {} self_test.cpp.gcno \;
+          COV=`echo ${{matrix.config.cxx}} | grep -q clang && echo "llvm-cov gcov"|| echo gcov`
+          find . -name "self_test.dir" -exec ${COV} -abcfu -o {} self_test.cpp.gcno \;
 
       - name: "upload coverage"
         uses: codecov/codecov-action@v3
