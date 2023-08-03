@@ -1,5 +1,8 @@
 # dry-comparisons
 
+![CI](https://github.com/rollbear/dry-comparisons/workflows/CI/badge.svg)
+[![codecov](https://codecov.io/gh/rollbear/dry-comparisons/branch/main/graph/badge.svg?token=XBT5Df1L3m)](https://codecov.io/gh/rollbear/dry-comparisons)
+
 This is the source code for the `any_of`, `all_of` and `none_of` C++17 utility mentioned in the blog post
 ["DRY multicomparisons"](http://playfulprogramming.blogspot.com/2018/07/dry-multicomparisons.html)
 

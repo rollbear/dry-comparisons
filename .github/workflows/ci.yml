@@ -4,28 +4,29 @@ on: [push, pull_request]
 
 jobs:
   build_linux:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
+    container: { image: "ghcr.io/rollbear/${{matrix.config.container}}", options: "--security-opt seccomp=unconfined" }
     strategy:
       fail-fast: false
       matrix:
         config:
-          - { cxx: clang++-10, std: 17, stdlib: "-stdlib=libc++", linker: "-fuse-ld=gold -lc++abi" }
-          - { cxx: clang++-10, std: 20, stdlib: "-stdlib=libc++", linker: "-fuse-ld=gold -lc++abi" }
-          - { cxx: clang++-10, std: 17 }
-          - { cxx: clang++-10, std: 20 }
-          - { cxx: g++-10, std: 17 }
-          - { cxx: g++-10, std: 20 }
-          - { cxx: clang++-9, std: 17 }
-          - { cxx: clang++-9, std: 20 }
-          - { cxx: g++-9, std: 17 }
-          - { cxx: g++-9, std: 20 }
-          - { cxx: clang++-8, std: 17 }
-          - { cxx: g++-8, std: 17 }
-          - { cxx: g++-8, std: 20 }
-          - { cxx: g++-7, std: 17 }
+          - { cxx: clang++-10, std: 17, stdlib: "-stdlib=libc++", linker: "-fuse-ld=gold -lc++abi", container: "clang:10" }
+          - { cxx: clang++-10, std: 20, stdlib: "-stdlib=libc++", linker: "-fuse-ld=gold -lc++abi", container: "clang:10" }
+          - { cxx: clang++-10, std: 17, container: "clang:10" }
+          - { cxx: clang++-10, std: 20, container: "clang:10" }
+          - { cxx: g++-10, std: 17, container: "gcc:10" }
+          - { cxx: g++-10, std: 20, container: "gcc:10" }
+          - { cxx: clang++-9, std: 17, container: "clang:9" }
+          - { cxx: clang++-9, std: 20, container: "clang:9" }
+          - { cxx: g++-9, std: 17, container: "gcc:9" }
+          - { cxx: g++-9, std: 20, container: "gcc:9" }
+          - { cxx: clang++-8, std: 17, container: "clang:8" }
+          - { cxx: g++-8, std: 17, container: "gcc:8" }
+          - { cxx: g++-8, std: 20, container: "gcc:8" }
+          - { cxx: g++-7, std: 17, container: "gcc:7" }
     name: "Linux ${{matrix.config.cxx}} C++${{matrix.config.std}} ${{matrix.config.stdlib}}"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: "setup"
         shell: bash
         run: |
@@ -34,7 +35,9 @@ jobs:
             -B build \
             -DCMAKE_CXX_COMPILER=${{matrix.config.cxx}} \
             -DCMAKE_CXX_STANDARD=${{matrix.config.std}} \
-            -DCMAKE_CXX_FLAGS="${{matrix.config.stdlib}} -Wall -Wextra -pedantic -Werror" \
+            -DCMAKE_CXX_STANDARD_REQUIRED=ON \
+            -DCMAKE_CXX_EXTENSIONS=OFF \
+            -DCMAKE_CXX_FLAGS="${{matrix.config.stdlib}} -Wall -Wextra -pedantic -Werror -Wconversion --coverage" \
             -DCMAKE_BUILD_TYPE=Debug
       - name: "build"
         run: |
@@ -43,17 +46,28 @@ jobs:
         run: |
           ./build/self_test
 
+      - name: "collect coverage"
+        run: |
+          COV=`echo ${{matrix.config.cxx}} | grep -q clang && echo "llvm-cov gcov"|| echo gcov`
+          find . -name "self_test.dir" -exec ${COV} -abcfu -o {} self_test.cpp.gcno \;
+
+      - name: "upload coverage"
+        uses: codecov/codecov-action@v3
+        with:
+          files: "dry-comparisons.hpp.gcov"
+          fail_ci_if_error: false
+          verbose: true
+
   build_windows:
     runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:
         config:
-          - { std: 17 }
           - { std: 20 }
     name: "Windows C++${{matrix.config.std}}"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: "setup"
         shell: bash
         run: |
